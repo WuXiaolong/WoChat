@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">WoChat</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="status_online">在线</string>
+    <string name="run_bg_ticker">XMPP正在后台运行</string>
+    <string name="request_failed">登录失败:</string>
+
+</resources>
