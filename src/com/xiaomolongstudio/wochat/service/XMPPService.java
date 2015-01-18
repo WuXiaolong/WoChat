@@ -11,7 +11,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,12 +22,8 @@ import com.xiaomolongstudio.wochat.IConnectionStatusCallback;
 import com.xiaomolongstudio.wochat.L;
 import com.xiaomolongstudio.wochat.LoginActivity;
 import com.xiaomolongstudio.wochat.NetUtil;
-import com.xiaomolongstudio.wochat.PreferenceConstants;
-import com.xiaomolongstudio.wochat.PreferenceUtils;
-import com.xiaomolongstudio.wochat.R;
-import com.xiaomolongstudio.wochat.T;
-import com.xiaomolongstudio.wochat.XXBroadcastReceiver;
-import com.xiaomolongstudio.wochat.XXBroadcastReceiver.EventHandler;
+import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver;
+import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver.EventHandler;
 import com.xiaomolongstudio.wochat.XXException;
 import com.xiaomolongstudio.wochat.smack.SmackImpl;
 
@@ -45,7 +40,7 @@ public class XMPPService extends BaseService implements EventHandler,
 
 	private IBinder mBinder = new XXBinder();
 	private IConnectionStatusCallback mConnectionStatusCallback;
-	private SmackImpl mSmackable;
+	private SmackImpl mSmackImpl;
 	private Thread mConnectingThread;
 	private Handler mMainHandler = new Handler();
 
@@ -129,7 +124,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		XXBroadcastReceiver.mListeners.add(this);
+		XMPPBroadcastReceiver.mListeners.add(this);
 		BaseActivity.mListeners.add(this);
 		mActivityManager = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
 		mPackageName = getPackageName();
@@ -143,13 +138,8 @@ public class XMPPService extends BaseService implements EventHandler,
 		if (intent != null
 				&& intent.getAction() != null
 				&& TextUtils.equals(intent.getAction(),
-						XXBroadcastReceiver.BOOT_COMPLETED_ACTION)) {
-			String account = PreferenceUtils.getPrefString(XMPPService.this,
-					PreferenceConstants.ACCOUNT, "");
-			String password = PreferenceUtils.getPrefString(XMPPService.this,
-					PreferenceConstants.PASSWORD, "");
-			if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(password))
-				Login(account, password);
+						XMPPBroadcastReceiver.BOOT_COMPLETED_ACTION)) {
+			Login("test007", "123456");
 		}
 		mMainHandler.removeCallbacks(monitorStatus);
 		mMainHandler.postDelayed(monitorStatus, 1000L);// 检查应用是否在后台运行线程
@@ -159,7 +149,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		XXBroadcastReceiver.mListeners.remove(this);
+		XMPPBroadcastReceiver.mListeners.remove(this);
 		BaseActivity.mListeners.remove(this);
 		((AlarmManager) getSystemService(Context.ALARM_SERVICE))
 				.cancel(mPAlarmIntent);// 取消重连闹钟
@@ -182,8 +172,8 @@ public class XMPPService extends BaseService implements EventHandler,
 			public void run() {
 				try {
 					postConnecting();
-					mSmackable = new SmackImpl(XMPPService.this);
-					if (mSmackable.login(account, password)) {
+					mSmackImpl = new SmackImpl(XMPPService.this);
+					if (mSmackImpl.login(account, password)) {
 						// 登陆成功
 						postConnectionScuessed();
 					} else {
@@ -226,26 +216,26 @@ public class XMPPService extends BaseService implements EventHandler,
 				}
 			}
 		}
-		if (mSmackable != null) {
-			isLogout = mSmackable.logout();
-			mSmackable = null;
+		if (mSmackImpl != null) {
+			isLogout = mSmackImpl.logout();
+			mSmackImpl = null;
 		}
 		connectionFailed(LOGOUT);// 手动退出
 		return isLogout;
 	}
 
 	// 发送消息
-	public void sendMessage(String user, String message) {
-		if (mSmackable != null)
-			mSmackable.sendMessage(user, message);
-		else
-			SmackImpl.sendOfflineMessage(getContentResolver(), user, message);
-	}
+	// public void sendMessage(String user, String message) {
+	// if (mSmackable != null)
+	// mSmackable.sendMessage(user, message);
+	// else
+	// SmackImpl.sendOfflineMessage(getContentResolver(), user, message);
+	// }
 
 	// 是否连接上服务器
 	public boolean isAuthenticated() {
-		if (mSmackable != null) {
-			return mSmackable.isAuthenticated();
+		if (mSmackImpl != null) {
+			return mSmackImpl.isAuthenticated();
 		}
 
 		return false;
@@ -271,57 +261,7 @@ public class XMPPService extends BaseService implements EventHandler,
 
 	// 设置连接状态
 	public void setStatusFromConfig() {
-		mSmackable.setStatusFromConfig();
-	}
-
-	// 新增联系人
-	public void addRosterItem(String user, String alias, String group) {
-		try {
-			mSmackable.addRosterItem(user, alias, group);
-		} catch (XXException e) {
-			T.showShort(this, e.getMessage());
-			L.e("exception in addRosterItem(): " + e.getMessage());
-		}
-	}
-
-	// 新增分组
-	public void addRosterGroup(String group) {
-		mSmackable.addRosterGroup(group);
-	}
-
-	// 删除联系人
-	public void removeRosterItem(String user) {
-		try {
-			mSmackable.removeRosterItem(user);
-		} catch (XXException e) {
-			T.showShort(this, e.getMessage());
-			L.e("exception in removeRosterItem(): " + e.getMessage());
-		}
-	}
-
-	// 将联系人移动到其他组
-	public void moveRosterItemToGroup(String user, String group) {
-		try {
-			mSmackable.moveRosterItemToGroup(user, group);
-		} catch (XXException e) {
-			T.showShort(this, e.getMessage());
-			L.e("exception in moveRosterItemToGroup(): " + e.getMessage());
-		}
-	}
-
-	// 重命名联系人
-	public void renameRosterItem(String user, String newName) {
-		try {
-			mSmackable.renameRosterItem(user, newName);
-		} catch (XXException e) {
-			T.showShort(this, e.getMessage());
-			L.e("exception in renameRosterItem(): " + e.getMessage());
-		}
-	}
-
-	// 重命名组
-	public void renameRosterGroup(String group, String newGroup) {
-		mSmackable.renameRosterGroup(group, newGroup);
+		mSmackImpl.setStatusFromConfig();
 	}
 
 	/**
@@ -364,8 +304,7 @@ public class XMPPService extends BaseService implements EventHandler,
 			return;
 		}
 		// 如果不是手动退出并且需要重新连接，则开启重连闹钟
-		if (PreferenceUtils.getPrefBoolean(this,
-				PreferenceConstants.AUTO_RECONNECT, true)) {
+		if (true) {
 			L.d("connectionFailed(): registering reconnect in "
 					+ mReconnectTimeout + "s");
 			((AlarmManager) getSystemService(Context.ALARM_SERVICE)).set(
@@ -416,59 +355,6 @@ public class XMPPService extends BaseService implements EventHandler,
 					"");
 	}
 
-	// 收到新消息
-	public void newMessage(final String from, final String message) {
-		mMainHandler.post(new Runnable() {
-			public void run() {
-				if (!PreferenceUtils.getPrefBoolean(XMPPService.this,
-						PreferenceConstants.SCLIENTNOTIFY, false))
-					MediaPlayer.create(XMPPService.this, R.raw.office).start();
-				if (!isAppOnForeground())
-					notifyClient(from, mSmackable.getNameForJID(from), message,
-							!mIsBoundTo.contains(from));
-				// T.showLong(XXService.this, from + ": " + message);
-
-			}
-
-		});
-	}
-
-	// 联系人改变
-	public void rosterChanged() {
-		// gracefully handle^W ignore events after a disconnect
-		if (mSmackable == null)
-			return;
-		if (mSmackable != null && !mSmackable.isAuthenticated()) {
-			L.i("rosterChanged(): disconnected without warning");
-			connectionFailed(DISCONNECTED_WITHOUT_WARNING);
-		}
-	}
-
-	/**
-	 * 更新通知栏
-	 * 
-	 * @param message
-	 */
-	public void updateServiceNotification(String message) {
-		// if (!PreferenceUtils.getPrefBoolean(this,
-		// PreferenceConstants.FOREGROUND, true))
-		// return;
-		// String title = PreferenceUtils.getPrefString(this,
-		// PreferenceConstants.ACCOUNT, "");
-		// Notification n = new Notification(R.drawable.login_default_avatar,
-		// title, System.currentTimeMillis());
-		// n.flags = Notification.FLAG_ONGOING_EVENT |
-		// Notification.FLAG_NO_CLEAR;
-		//
-		// Intent notificationIntent = new Intent(this, MainActivity.class);
-		// notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		// n.contentIntent = PendingIntent.getActivity(this, 0,
-		// notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		//
-		// n.setLatestEventInfo(this, title, message, n.contentIntent);
-		// startForeground(SERVICE_NOTIFICATION, n);
-	}
-
 	// 判断程序是否在后台运行的任务
 	Runnable monitorStatus = new Runnable() {
 		public void run() {
@@ -479,7 +365,7 @@ public class XMPPService extends BaseService implements EventHandler,
 				if (!isAppOnForeground()) {
 					L.i("app run in background...");
 					// if (isAuthenticated())
-					updateServiceNotification(getString(R.string.run_bg_ticker));
+					// updateServiceNotification(getString(R.string.run_bg_ticker));
 					return;
 				} else {
 					stopForeground(true);
@@ -519,23 +405,23 @@ public class XMPPService extends BaseService implements EventHandler,
 	private class ReconnectAlarmReceiver extends BroadcastReceiver {
 		public void onReceive(Context ctx, Intent i) {
 			L.d("Alarm received.");
-			if (!PreferenceUtils.getPrefBoolean(XMPPService.this,
-					PreferenceConstants.AUTO_RECONNECT, true)) {
-				return;
-			}
+			// if (!PreferenceUtils.getPrefBoolean(XMPPService.this,
+			// PreferenceConstants.AUTO_RECONNECT, true)) {
+			// return;
+			// }
 			if (mConnectedState != DISCONNECTED) {
 				L.d("Reconnect attempt aborted: we are connected again!");
 				return;
 			}
-			String account = PreferenceUtils.getPrefString(XMPPService.this,
-					PreferenceConstants.ACCOUNT, "");
-			String password = PreferenceUtils.getPrefString(XMPPService.this,
-					PreferenceConstants.PASSWORD, "");
-			if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-				L.d("account = null || password = null");
-				return;
-			}
-			Login(account, password);
+			// String account = PreferenceUtils.getPrefString(XMPPService.this,
+			// PreferenceConstants.ACCOUNT, "");
+			// String password = PreferenceUtils.getPrefString(XMPPService.this,
+			// PreferenceConstants.PASSWORD, "");
+			// if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
+			// L.d("account = null || password = null");
+			// return;
+			// }
+			Login("test007", "123456");
 		}
 	}
 
@@ -547,16 +433,17 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		if (isAuthenticated())// 如果已经连接上，直接返回
 			return;
-		String account = PreferenceUtils.getPrefString(XMPPService.this,
-				PreferenceConstants.ACCOUNT, "");
-		String password = PreferenceUtils.getPrefString(XMPPService.this,
-				PreferenceConstants.PASSWORD, "");
-		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))// 如果没有帐号，也直接返回
-			return;
-		if (!PreferenceUtils.getPrefBoolean(this,
-				PreferenceConstants.AUTO_RECONNECT, true))// 不需要重连
-			return;
-		Login(account, password);// 重连
+		// String account = PreferenceUtils.getPrefString(XMPPService.this,
+		// PreferenceConstants.ACCOUNT, "");
+		// String password = PreferenceUtils.getPrefString(XMPPService.this,
+		// PreferenceConstants.PASSWORD, "");
+		// if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))//
+		// 如果没有帐号，也直接返回
+		// return;
+		// if (!PreferenceUtils.getPrefBoolean(this,
+		// PreferenceConstants.AUTO_RECONNECT, true))// 不需要重连
+		// return;
+		Login("test007", "123456");// 重连
 	}
 
 	@Override

@@ -10,7 +10,7 @@ import android.text.TextUtils;
 
 import com.xiaomolongstudio.wochat.service.XMPPService;
 
-public class XXBroadcastReceiver extends BroadcastReceiver {
+public class XMPPBroadcastReceiver extends BroadcastReceiver {
 	public static final String BOOT_COMPLETED_ACTION = "com.way.action.BOOT_COMPLETED";
 	public static ArrayList<EventHandler> mListeners = new ArrayList<EventHandler>();
 
@@ -28,14 +28,14 @@ public class XXBroadcastReceiver extends BroadcastReceiver {
 			Intent xmppServiceIntent = new Intent(context, XMPPService.class);
 			context.stopService(xmppServiceIntent);
 		} else {
-			if (!TextUtils.isEmpty(PreferenceUtils.getPrefString(context,
-					PreferenceConstants.PASSWORD, ""))
-					&& PreferenceUtils.getPrefBoolean(context,
-							PreferenceConstants.AUTO_START, true)) {
+//			if (!TextUtils.isEmpty(PreferenceUtils.getPrefString(context,
+//					PreferenceConstants.PASSWORD, ""))
+//					&& PreferenceUtils.getPrefBoolean(context,
+//							PreferenceConstants.AUTO_START, true)) {
 				Intent i = new Intent(context, XMPPService.class);
 				i.setAction(BOOT_COMPLETED_ACTION);
 				context.startService(i);
-			}
+//			}
 		}
 	}
 

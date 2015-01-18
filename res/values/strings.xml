@@ -7,5 +7,14 @@
     <string name="status_online">在线</string>
     <string name="run_bg_ticker">XMPP正在后台运行</string>
     <string name="request_failed">登录失败:</string>
+    <!-- 缺省的服务器配置 -->
+    <integer name="xmpp_port">5222</integer>
+
+    <string name="xmpp_host">192.168.1.103</string>
+    <string name="xmpp_service_name">gmail.com</string>
+
+    <bool name="is_remember">true</bool>
+    <bool name="is_autologin">false</bool>
+    <bool name="is_novisible">false</bool>
 
 </resources>

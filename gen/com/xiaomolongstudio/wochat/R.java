@@ -10,6 +10,11 @@ package com.xiaomolongstudio.wochat;
 public final class R {
     public static final class attr {
     }
+    public static final class bool {
+        public static final int is_autologin=0x7f080001;
+        public static final int is_novisible=0x7f080002;
+        public static final int is_remember=0x7f080000;
+    }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
 
@@ -25,18 +30,23 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f090004;
-        public static final int btn_login=0x7f090002;
-        public static final int textView1=0x7f090003;
-        public static final int userName=0x7f090000;
-        public static final int userPassword=0x7f090001;
+        public static final int action_settings=0x7f0b0004;
+        public static final int btn_login=0x7f0b0002;
+        public static final int textView1=0x7f0b0003;
+        public static final int userName=0x7f0b0000;
+        public static final int userPassword=0x7f0b0001;
+    }
+    public static final class integer {
+        /**  缺省的服务器配置 
+         */
+        public static final int xmpp_port=0x7f070000;
     }
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int activity_main=0x7f030001;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int main=0x7f0a0000;
     }
     public static final class raw {
         public static final int office=0x7f040000;
@@ -48,6 +58,8 @@ public final class R {
         public static final int request_failed=0x7f060005;
         public static final int run_bg_ticker=0x7f060004;
         public static final int status_online=0x7f060003;
+        public static final int xmpp_host=0x7f060006;
+        public static final int xmpp_service_name=0x7f060007;
     }
     public static final class style {
         /** 
@@ -77,10 +89,10 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f090001;
     }
 }

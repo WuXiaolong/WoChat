@@ -11,7 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.xiaomolongstudio.wochat.XXBroadcastReceiver.EventHandler;
+import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver.EventHandler;
 import com.xiaomolongstudio.wochat.service.XMPPService;
 
 public class MainActivity extends Activity implements
@@ -25,10 +25,10 @@ public class MainActivity extends Activity implements
 			mXxService.registerConnectionStatusCallback(MainActivity.this);
 			// 开始连接xmpp服务器
 			if (!mXxService.isAuthenticated()) {
-				String usr = PreferenceUtils.getPrefString(MainActivity.this,
-						PreferenceConstants.ACCOUNT, "");
-				String password = PreferenceUtils.getPrefString(
-						MainActivity.this, PreferenceConstants.PASSWORD, "");
+				// String usr = PreferenceUtils.getPrefString(MainActivity.this,
+				// PreferenceConstants.ACCOUNT, "");
+				// String password = PreferenceUtils.getPrefString(
+				// MainActivity.this, PreferenceConstants.PASSWORD, "");
 				mXxService.Login("test007", "123456");
 				mTitle.setText("掉线");
 				// setStatusImage(false);
@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements
 	protected void onResume() {
 		super.onResume();
 		bindXMPPService();
-		XXBroadcastReceiver.mListeners.add(this);
+		XMPPBroadcastReceiver.mListeners.add(this);
 		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {
 		} else {
 		}
@@ -106,7 +106,7 @@ public class MainActivity extends Activity implements
 	protected void onPause() {
 		super.onPause();
 		unbindXMPPService();
-		XXBroadcastReceiver.mListeners.remove(this);
+		XMPPBroadcastReceiver.mListeners.remove(this);
 	}
 
 	@Override
