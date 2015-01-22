@@ -1,4 +1,4 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.ui;
 
 import java.util.ArrayList;
 
@@ -57,11 +57,11 @@ public class BaseActivity extends FragmentActivity {
 	public void bindXMPPService(String action,
 			ServiceConnection serviceConnection) {
 		this.serviceConnection = serviceConnection;
-		Log.i("wxl", "[SERVICE] Unbind");
+		Log.i("wxl", action + "+bindXMPPService");
 		Intent mServiceIntent = new Intent(this, XMPPService.class);
 		mServiceIntent.setAction(action);
-		bindService(new Intent(this, XMPPService.class), serviceConnection,
-				Context.BIND_AUTO_CREATE + Context.BIND_DEBUG_UNBIND);
+		bindService(mServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE
+				+ Context.BIND_DEBUG_UNBIND);
 	}
 
 	public static abstract interface BackPressHandler {

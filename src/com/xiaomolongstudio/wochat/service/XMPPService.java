@@ -12,14 +12,13 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.carbons.Carbon;
@@ -31,12 +30,14 @@ import org.jivesoftware.smackx.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -46,16 +47,21 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.xiaomolongstudio.wochat.BaseActivity;
-import com.xiaomolongstudio.wochat.BaseActivity.BackPressHandler;
-import com.xiaomolongstudio.wochat.IConnectionStatusCallback;
-import com.xiaomolongstudio.wochat.L;
-import com.xiaomolongstudio.wochat.LoginActivity;
-import com.xiaomolongstudio.wochat.NetUtil;
-import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver;
-import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver.EventHandler;
-import com.xiaomolongstudio.wochat.XXException;
+import com.xiaomolongstudio.wochat.R;
 import com.xiaomolongstudio.wochat.smack.SmackImpl;
+import com.xiaomolongstudio.wochat.ui.BaseActivity;
+import com.xiaomolongstudio.wochat.ui.BaseActivity.BackPressHandler;
+import com.xiaomolongstudio.wochat.ui.LoginActivity;
+import com.xiaomolongstudio.wochat.ui.MainActivity;
+import com.xiaomolongstudio.wochat.utils.AppUtils;
+import com.xiaomolongstudio.wochat.utils.L;
+import com.xiaomolongstudio.wochat.utils.NetUtil;
+import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
+import com.xiaomolongstudio.wochat.utils.PreferenceUtils;
+import com.xiaomolongstudio.wochat.xmpp.IConnectionStatusCallback;
+import com.xiaomolongstudio.wochat.xmpp.XMPPBroadcastReceiver;
+import com.xiaomolongstudio.wochat.xmpp.XMPPBroadcastReceiver.EventHandler;
+import com.xiaomolongstudio.wochat.xmpp.XXException;
 
 public class XMPPService extends BaseService implements EventHandler,
 		BackPressHandler {
@@ -169,7 +175,13 @@ public class XMPPService extends BaseService implements EventHandler,
 				&& intent.getAction() != null
 				&& TextUtils.equals(intent.getAction(),
 						XMPPBroadcastReceiver.BOOT_COMPLETED_ACTION)) {
-			login(account, "123456");
+			String userName = PreferenceUtils.getPrefString(XMPPService.this,
+					PreferenceConstants.USER_NAME, "");
+			String userPassword = PreferenceUtils.getPrefString(
+					XMPPService.this, PreferenceConstants.PASSWORD, "");
+			if (!TextUtils.isEmpty(userName)
+					&& !TextUtils.isEmpty(userPassword))
+				login(userName, userPassword);
 		}
 		mMainHandler.removeCallbacks(monitorStatus);
 		mMainHandler.postDelayed(monitorStatus, 1000L);// 检查应用是否在后台运行线程
@@ -191,13 +203,14 @@ public class XMPPService extends BaseService implements EventHandler,
 	// String xmpp_host = "192.168.1.103";
 	String xmpp_service_name = "gmail.com";
 	int xmpp_port = 5222;
-	String xmpp_host = "192.168.2.8";
+	// String xmpp_host = "192.168.2.8";
+	String xmpp_host = "192.168.1.103";
 	public static final String XMPP_IDENTITY_NAME = "xx";
 	public static final String XMPP_IDENTITY_TYPE = "phone";
 	private static final int PACKET_TIMEOUT = 30000;
 	private ConnectionConfiguration mXMPPConfig;
 	private XMPPConnection mXMPPConnection;
-	private XMPPService mService;
+	// private XMPPService mService;
 	private Roster mRoster;
 	private PacketListener mPongListener;
 
@@ -214,13 +227,16 @@ public class XMPPService extends BaseService implements EventHandler,
 	private PongTimeoutAlarmReceiver mPongTimeoutAlarmReceiver = new PongTimeoutAlarmReceiver();
 	private BroadcastReceiver mPingAlarmReceiver = new PingAlarmReceiver();
 
+	/**
+	 * 初始化
+	 */
 	public void initXMPPConnection() {
 		registerSmackProviders();
 		this.mXMPPConfig = new ConnectionConfiguration(xmpp_host, xmpp_port,
 				xmpp_service_name);
 
-		this.mXMPPConfig.setReconnectionAllowed(false);
-		this.mXMPPConfig.setSendPresence(false);
+		this.mXMPPConfig.setReconnectionAllowed(true);
+		this.mXMPPConfig.setSendPresence(true);
 		this.mXMPPConfig.setCompressionEnabled(false); // disable for now
 		this.mXMPPConfig.setDebuggerEnabled(true);
 		this.mXMPPConfig
@@ -229,6 +245,13 @@ public class XMPPService extends BaseService implements EventHandler,
 		this.mXMPPConnection = new XMPPConnection(mXMPPConfig);
 	}
 
+	/**
+	 * 登录
+	 * 
+	 * @param account
+	 * @param password
+	 * @return
+	 */
 	public boolean isLogin(String account, String password) {
 		try {
 			if (mXMPPConnection.isConnected()) {
@@ -241,7 +264,7 @@ public class XMPPService extends BaseService implements EventHandler,
 			SmackConfiguration.setPacketReplyTimeout(PACKET_TIMEOUT);
 			SmackConfiguration.setKeepAliveInterval(-1);
 			SmackConfiguration.setDefaultPingInterval(0);
-			registerRosterListener();// 监听联系人动态变化
+
 			// registerPacketListener();
 			mXMPPConnection.connect();
 			if (!mXMPPConnection.isConnected()) {
@@ -249,7 +272,7 @@ public class XMPPService extends BaseService implements EventHandler,
 			}
 			mXMPPConnection.addConnectionListener(new ConnectionListener() {
 				public void connectionClosedOnError(Exception e) {
-					mService.postConnectionFailed(e.getMessage());
+					XMPPService.this.postConnectionFailed(e.getMessage());
 				}
 
 				public void connectionClosed() {
@@ -280,11 +303,14 @@ public class XMPPService extends BaseService implements EventHandler,
 		return mXMPPConnection.isAuthenticated();
 	}
 
-	// 登录
-	String account;
+	/**
+	 * 登录
+	 * 
+	 * @param userName
+	 * @param password
+	 */
 
-	public void login(final String account, final String password) {
-		this.account = account;
+	public void login(final String userName, final String password) {
 		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {
 			connectionFailed(NETWORK_ERROR);
 			return;
@@ -299,7 +325,7 @@ public class XMPPService extends BaseService implements EventHandler,
 				try {
 					postConnecting();
 					initXMPPConnection();
-					if (isLogin(account, password)) {
+					if (isLogin(userName, password)) {
 						// 登陆成功
 						postConnectionScuessed();
 					} else {
@@ -390,6 +416,11 @@ public class XMPPService extends BaseService implements EventHandler,
 					.isAuthenticated());
 		}
 		return false;
+	}
+
+	// 默认显示的的Notification http://www.oschina.net/question/234345_40111
+	public void showDefaultNotification() { // 新建状态栏通知
+
 	}
 
 	// 清除通知栏
@@ -563,15 +594,13 @@ public class XMPPService extends BaseService implements EventHandler,
 				L.d("Reconnect attempt aborted: we are connected again!");
 				return;
 			}
-			// String account = PreferenceUtils.getPrefString(XMPPService.this,
-			// PreferenceConstants.ACCOUNT, "");
-			// String password = PreferenceUtils.getPrefString(XMPPService.this,
-			// PreferenceConstants.PASSWORD, "");
-			// if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-			// L.d("account = null || password = null");
-			// return;
-			// }
-			login(account, "123456");
+			String userName = PreferenceUtils.getPrefString(XMPPService.this,
+					PreferenceConstants.USER_NAME, "");
+			String userPassword = PreferenceUtils.getPrefString(
+					XMPPService.this, PreferenceConstants.PASSWORD, "");
+			if (!TextUtils.isEmpty(userName)
+					&& !TextUtils.isEmpty(userPassword))
+				login(userName, userPassword);
 		}
 	}
 
@@ -583,17 +612,12 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		if (isAuthenticated())// 如果已经连接上，直接返回
 			return;
-		// String account = PreferenceUtils.getPrefString(XMPPService.this,
-		// PreferenceConstants.ACCOUNT, "");
-		// String password = PreferenceUtils.getPrefString(XMPPService.this,
-		// PreferenceConstants.PASSWORD, "");
-		// if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password))//
-		// 如果没有帐号，也直接返回
-		// return;
-		// if (!PreferenceUtils.getPrefBoolean(this,
-		// PreferenceConstants.AUTO_RECONNECT, true))// 不需要重连
-		// return;
-		login(account, "123456");// 重连
+		String userName = PreferenceUtils.getPrefString(XMPPService.this,
+				PreferenceConstants.USER_NAME, "");
+		String userPassword = PreferenceUtils.getPrefString(XMPPService.this,
+				PreferenceConstants.PASSWORD, "");
+		if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPassword))
+			login(userName, userPassword);// 重连
 	}
 
 	@Override
@@ -612,11 +636,12 @@ public class XMPPService extends BaseService implements EventHandler,
 		// actually, authenticated must be true now, or an exception must have
 		// been thrown.
 		if (isAuthenticated()) {
+			registerRosterListener();// 监听联系人动态变化
 			// registerMessageListener();
 			// registerMessageSendFailureListener();
 			registerPongListener();
 			// sendOfflineMessages();
-			if (mService == null) {
+			if (XMPPService.this == null) {
 				mXMPPConnection.disconnect();
 				return;
 			}
@@ -646,7 +671,7 @@ public class XMPPService extends BaseService implements EventHandler,
 							"Ping: server latency %1.3fs",
 							(System.currentTimeMillis() - mPingTimestamp) / 1000.));
 					mPingID = null;
-					((AlarmManager) mService
+					((AlarmManager) XMPPService.this
 							.getSystemService(Context.ALARM_SERVICE))
 							.cancel(mPongTimeoutAlarmPendIntent);
 				}
@@ -657,21 +682,20 @@ public class XMPPService extends BaseService implements EventHandler,
 		mXMPPConnection.addPacketListener(mPongListener, new PacketTypeFilter(
 				IQ.class));
 		mPingAlarmPendIntent = PendingIntent.getBroadcast(
-				mService.getApplicationContext(), 0, mPingAlarmIntent,
+				XMPPService.this.getApplicationContext(), 0, mPingAlarmIntent,
 				PendingIntent.FLAG_UPDATE_CURRENT);
 		mPongTimeoutAlarmPendIntent = PendingIntent.getBroadcast(
-				mService.getApplicationContext(), 0, mPongTimeoutAlarmIntent,
-				PendingIntent.FLAG_UPDATE_CURRENT);
-		mService.registerReceiver(mPingAlarmReceiver, new IntentFilter(
+				XMPPService.this.getApplicationContext(), 0,
+				mPongTimeoutAlarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		XMPPService.this.registerReceiver(mPingAlarmReceiver, new IntentFilter(
 				PING_ALARM));
-		mService.registerReceiver(mPongTimeoutAlarmReceiver, new IntentFilter(
-				PONG_TIMEOUT_ALARM));
-		((AlarmManager) mService.getSystemService(Context.ALARM_SERVICE))
-				.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-						System.currentTimeMillis()
-								+ AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-						AlarmManager.INTERVAL_FIFTEEN_MINUTES,
-						mPingAlarmPendIntent);
+		XMPPService.this.registerReceiver(mPongTimeoutAlarmReceiver,
+				new IntentFilter(PONG_TIMEOUT_ALARM));
+		((AlarmManager) XMPPService.this
+				.getSystemService(Context.ALARM_SERVICE)).setInexactRepeating(
+				AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
+						+ AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+				AlarmManager.INTERVAL_FIFTEEN_MINUTES, mPingAlarmPendIntent);
 	}
 
 	/**
@@ -680,7 +704,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	private class PongTimeoutAlarmReceiver extends BroadcastReceiver {
 		public void onReceive(Context ctx, Intent i) {
 			L.d("Ping: timeout for " + mPingID);
-			mService.postConnectionFailed(XMPPService.PONG_TIMEOUT);
+			postConnectionFailed(XMPPService.PONG_TIMEOUT);
 			logout();// 超时就断开连接
 		}
 	}
@@ -711,16 +735,12 @@ public class XMPPService extends BaseService implements EventHandler,
 		mXMPPConnection.sendPacket(ping);
 
 		// register ping timeout handler: PACKET_TIMEOUT(30s) + 3s
-		((AlarmManager) mService.getSystemService(Context.ALARM_SERVICE)).set(
+		((AlarmManager) getSystemService(Context.ALARM_SERVICE)).set(
 				AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
 						+ PACKET_TIMEOUT + 3000, mPongTimeoutAlarmPendIntent);
 	}
 
 	/***************** end 处理ping服务器消息 ***********************/
-	private String getJabberID(String from) {
-		String[] res = from.split("/");
-		return res[0].toLowerCase();
-	}
 
 	private RosterListener mRosterListener;
 
@@ -735,7 +755,7 @@ public class XMPPService extends BaseService implements EventHandler,
 						+ presence);
 				Log.i("wxl", "registerRosterListener presence.getType()="
 						+ presence.getType());
-				String jabberID = getJabberID(presence.getFrom());
+				String jabberID = AppUtils.getJabberID(presence.getFrom());
 				RosterEntry rosterEntry = mRoster.getEntry(jabberID);
 			}
 

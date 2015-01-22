@@ -14,7 +14,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.Vibrator;
 import android.util.Log;
 
-import com.xiaomolongstudio.wochat.ChatActivity;
+import com.xiaomolongstudio.wochat.ui.ChatActivity;
 
 public abstract class BaseService extends Service {
 

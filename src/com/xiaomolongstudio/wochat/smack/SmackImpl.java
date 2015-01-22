@@ -32,9 +32,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.xiaomolongstudio.wochat.L;
-import com.xiaomolongstudio.wochat.XXException;
 import com.xiaomolongstudio.wochat.service.XMPPService;
+import com.xiaomolongstudio.wochat.utils.L;
+import com.xiaomolongstudio.wochat.xmpp.XXException;
 
 public class SmackImpl implements Smack {
 	public static final String XMPP_IDENTITY_NAME = "xx";

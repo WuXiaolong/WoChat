@@ -1,4 +1,4 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.xmpp;
 
 import java.util.ArrayList;
 
@@ -9,6 +9,7 @@ import android.net.ConnectivityManager;
 import android.text.TextUtils;
 
 import com.xiaomolongstudio.wochat.service.XMPPService;
+import com.xiaomolongstudio.wochat.utils.L;
 
 public class XMPPBroadcastReceiver extends BroadcastReceiver {
 	public static final String BOOT_COMPLETED_ACTION = "com.way.action.BOOT_COMPLETED";

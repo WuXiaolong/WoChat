@@ -1,4 +1,4 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.utils;
 
 import android.content.Context;
 import android.widget.Toast;

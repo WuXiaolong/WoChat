@@ -1,4 +1,4 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.xmpp;
 
 public class XXException extends Exception {
 	private static final long serialVersionUID = 1L;

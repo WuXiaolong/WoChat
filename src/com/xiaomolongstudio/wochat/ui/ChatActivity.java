@@ -1,4 +1,7 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.ui;
+
+import com.xiaomolongstudio.wochat.R;
+import com.xiaomolongstudio.wochat.R.layout;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,7 +1,6 @@
-package com.xiaomolongstudio.wochat;
+package com.xiaomolongstudio.wochat.ui;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -12,7 +11,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.xiaomolongstudio.wochat.R;
+import com.xiaomolongstudio.wochat.R.id;
+import com.xiaomolongstudio.wochat.R.layout;
+import com.xiaomolongstudio.wochat.R.string;
 import com.xiaomolongstudio.wochat.service.XMPPService;
+import com.xiaomolongstudio.wochat.utils.AppConfig;
+import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
+import com.xiaomolongstudio.wochat.utils.PreferenceUtils;
+import com.xiaomolongstudio.wochat.utils.T;
+import com.xiaomolongstudio.wochat.xmpp.IConnectionStatusCallback;
 
 public class LoginActivity extends BaseActivity {
 	public static final String LOGIN_ACTION = "com.way.action.LOGIN";
@@ -59,8 +67,17 @@ public class LoginActivity extends BaseActivity {
 						public void connectionStatusChanged(int connectedState,
 								String reason) {
 							if (connectedState == XMPPService.CONNECTED) {
+								PreferenceUtils.setPrefString(
+										LoginActivity.this,
+										PreferenceConstants.USER_NAME, userName
+												.getText().toString());
+								PreferenceUtils.setPrefString(
+										LoginActivity.this,
+										PreferenceConstants.PASSWORD,
+										userPassword.getText().toString());
 								startActivity(new Intent(LoginActivity.this,
 										MainActivity.class));
+								mXxService.showDefaultNotification();
 								finish();
 							} else if (connectedState == XMPPService.DISCONNECTED)
 								T.showLong(LoginActivity.this,

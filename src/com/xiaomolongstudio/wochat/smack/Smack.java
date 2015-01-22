@@ -1,6 +1,6 @@
 package com.xiaomolongstudio.wochat.smack;
 
-import com.xiaomolongstudio.wochat.XXException;
+import com.xiaomolongstudio.wochat.xmpp.XXException;
 
 /**
  * 首先定义一些接口，需要实现一些什么样的功能，
