@@ -30,8 +30,11 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int action_settings=0x7f0b0004;
+        public static final int action_settings=0x7f0b0007;
         public static final int btn_login=0x7f0b0002;
+        public static final int button1=0x7f0b0004;
+        public static final int button2=0x7f0b0005;
+        public static final int editText1=0x7f0b0006;
         public static final int textView1=0x7f0b0003;
         public static final int userName=0x7f0b0000;
         public static final int userPassword=0x7f0b0001;
@@ -65,25 +68,21 @@ public final class R {
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-
     
 
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
-
         
 
         Base application theme for API 11+. This theme completely replaces
         AppBaseTheme from res/values/styles.xml on API 11+ devices.
-
     
  API 11 theme customizations can go here. 
 
         Base application theme for API 14+. This theme completely replaces
         AppBaseTheme from BOTH res/values/styles.xml and
         res/values-v11/styles.xml on API 14+ devices.
-
 
 
     

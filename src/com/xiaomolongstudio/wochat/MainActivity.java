@@ -1,49 +1,67 @@
 package com.xiaomolongstudio.wochat;
 
-import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xiaomolongstudio.wochat.XMPPBroadcastReceiver.EventHandler;
 import com.xiaomolongstudio.wochat.service.XMPPService;
 
-public class MainActivity extends Activity implements
-		IConnectionStatusCallback, EventHandler {
-	private XMPPService mXxService;
+public class MainActivity extends BaseActivity implements EventHandler {
+	private XMPPService mXMPPService = null;
 	ServiceConnection mServiceConnection = new ServiceConnection() {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mXxService = ((XMPPService.XXBinder) service).getService();
-			mXxService.registerConnectionStatusCallback(MainActivity.this);
+			mXMPPService = ((XMPPService.XXBinder) service).getService();
+			mXMPPService
+					.registerConnectionStatusCallback(new IConnectionStatusCallback() {
+
+						@Override
+						public void connectionStatusChanged(int connectedState,
+								String reason) {
+
+							switch (connectedState) {
+							case XMPPService.CONNECTED:
+								mTitle.setText("CONNECTED");
+								break;
+							case XMPPService.CONNECTING:
+								mTitle.setText("CONNECTING");
+								break;
+							case XMPPService.DISCONNECTED:
+								mTitle.setText("DISCONNECTED");
+								Toast.makeText(MainActivity.this, reason,
+										Toast.LENGTH_SHORT).show();
+								break;
+
+							default:
+								break;
+							}
+
+						}
+					});
 			// 开始连接xmpp服务器
-			if (!mXxService.isAuthenticated()) {
-				// String usr = PreferenceUtils.getPrefString(MainActivity.this,
-				// PreferenceConstants.ACCOUNT, "");
-				// String password = PreferenceUtils.getPrefString(
-				// MainActivity.this, PreferenceConstants.PASSWORD, "");
-				mXxService.Login("test007", "123456");
+			if (!mXMPPService.isAuthenticated()) {
+				mXMPPService.login("test007", "123456");
 				mTitle.setText("掉线");
-				// setStatusImage(false);
-				// mTitleProgressBar.setVisibility(View.VISIBLE);
 			} else {
 				mTitle.setText("在线");
-				// setStatusImage(true);
-				// mTitleProgressBar.setVisibility(View.GONE);
 			}
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			mXxService.unRegisterConnectionStatusCallback();
-			mXxService = null;
+			mXMPPService.unRegisterConnectionStatusCallback();
+			mXMPPService = null;
 		}
 
 	};
@@ -52,25 +70,33 @@ public class MainActivity extends Activity implements
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		startService(new Intent(MainActivity.this, XMPPService.class));
+		super.bindXMPPService(AppConfig.MAIN_ACTION, mServiceConnection);
 		setContentView(R.layout.activity_main);
 		mTitle = (TextView) findViewById(R.id.textView1);
-	}
+		final EditText editText1 = (EditText) findViewById(R.id.editText1);
+		findViewById(R.id.button1).setOnClickListener(new OnClickListener() {
 
-	private void bindXMPPService() {
-		L.i(LoginActivity.class, "[SERVICE] Unbind");
-		bindService(new Intent(MainActivity.this, XMPPService.class),
-				mServiceConnection, Context.BIND_AUTO_CREATE
-						+ Context.BIND_DEBUG_UNBIND);
-	}
+			@Override
+			public void onClick(View v) {
+				if (mXMPPService != null) {
+					Log.d("wxl", "添加");
+					mXMPPService.addUser(editText1.getText().toString(), "昵称");
+				} else {
+					Log.d("wxl", "mXMPPService null");
+				}
 
-	private void unbindXMPPService() {
-		try {
-			unbindService(mServiceConnection);
-			L.i(LoginActivity.class, "[SERVICE] Unbind");
-		} catch (IllegalArgumentException e) {
-			L.e(LoginActivity.class, "Service wasn't bound!");
-		}
+			}
+		});
+		findViewById(R.id.button2).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (mXMPPService != null) {
+				} else {
+				}
+
+			}
+		});
 	}
 
 	@Override
@@ -93,57 +119,9 @@ public class MainActivity extends Activity implements
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
-		bindXMPPService();
-		XMPPBroadcastReceiver.mListeners.add(this);
-		if (NetUtil.getNetworkState(this) == NetUtil.NETWORN_NONE) {
-		} else {
-		}
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		unbindXMPPService();
-		XMPPBroadcastReceiver.mListeners.remove(this);
-	}
-
-	@Override
 	public void onNetChange() {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
-	public void connectionStatusChanged(int connectedState, String reason) {
-		switch (connectedState) {
-		case XMPPService.CONNECTED:
-			mTitle.setText("CONNECTED");
-			// mTitleNameView.setText(XMPPHelper.splitJidAndServer(PreferenceUtils
-			// .getPrefString(MainActivity.this,
-			// PreferenceConstants.ACCOUNT, "")));
-			// mTitleProgressBar.setVisibility(View.GONE);
-			// // mTitleStatusView.setVisibility(View.GONE);
-			// setStatusImage(true);
-			break;
-		case XMPPService.CONNECTING:
-			mTitle.setText("CONNECTING");
-			// mTitleNameView.setText(R.string.login_prompt_msg);
-			// mTitleProgressBar.setVisibility(View.VISIBLE);
-			// mTitleStatusView.setVisibility(View.GONE);
-			break;
-		case XMPPService.DISCONNECTED:
-			mTitle.setText("DISCONNECTED");
-			// mTitleNameView.setText(R.string.login_prompt_no);
-			// mTitleProgressBar.setVisibility(View.GONE);
-			// mTitleStatusView.setVisibility(View.GONE);
-			T.showLong(this, reason);
-			break;
-
-		default:
-			break;
-		}
-
-	}
 }

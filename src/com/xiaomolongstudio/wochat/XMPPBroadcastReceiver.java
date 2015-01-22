@@ -18,24 +18,35 @@ public class XMPPBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
 		L.i("action = " + action);
+		/**
+		 * 网络变化监听
+		 */
 		if (TextUtils.equals(action, ConnectivityManager.CONNECTIVITY_ACTION)) {
 			if (mListeners.size() > 0)// 通知接口完成加载
 				for (EventHandler handler : mListeners) {
 					handler.onNetChange();
 				}
-		} else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
+		}
+		/**
+		 * 关机监听
+		 */
+		else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
 			L.d("System shutdown, stopping service.");
 			Intent xmppServiceIntent = new Intent(context, XMPPService.class);
 			context.stopService(xmppServiceIntent);
-		} else {
-//			if (!TextUtils.isEmpty(PreferenceUtils.getPrefString(context,
-//					PreferenceConstants.PASSWORD, ""))
-//					&& PreferenceUtils.getPrefBoolean(context,
-//							PreferenceConstants.AUTO_START, true)) {
-				Intent i = new Intent(context, XMPPService.class);
-				i.setAction(BOOT_COMPLETED_ACTION);
-				context.startService(i);
-//			}
+		}
+		/**
+		 * 开机监听
+		 */
+		else {
+			// if (!TextUtils.isEmpty(PreferenceUtils.getPrefString(context,
+			// PreferenceConstants.PASSWORD, ""))
+			// && PreferenceUtils.getPrefBoolean(context,
+			// PreferenceConstants.AUTO_START, true)) {
+			Intent i = new Intent(context, XMPPService.class);
+			i.setAction(BOOT_COMPLETED_ACTION);
+			context.startService(i);
+			// }
 		}
 	}
 

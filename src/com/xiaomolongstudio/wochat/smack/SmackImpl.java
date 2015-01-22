@@ -91,13 +91,13 @@ public class SmackImpl implements Smack {
 	}
 
 	// ping-pong服务器
-	String xmpp_host = "192.168.1.103";
+	// String xmpp_host = "192.168.1.103";
 	String xmpp_service_name = "gmail.com";
 	int xmpp_port = 5222;
+	String xmpp_host = "192.168.2.8";
 
 	public SmackImpl(XMPPService service) {
 
-		// String customServer = "192.168.2.4";
 		this.mXMPPConfig = new ConnectionConfiguration(xmpp_host, xmpp_port,
 				xmpp_service_name);
 
