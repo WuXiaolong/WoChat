@@ -53,6 +53,7 @@ import com.xiaomolongstudio.wochat.ui.BaseActivity;
 import com.xiaomolongstudio.wochat.ui.BaseActivity.BackPressHandler;
 import com.xiaomolongstudio.wochat.ui.LoginActivity;
 import com.xiaomolongstudio.wochat.ui.MainActivity;
+import com.xiaomolongstudio.wochat.utils.AppConfig;
 import com.xiaomolongstudio.wochat.utils.AppUtils;
 import com.xiaomolongstudio.wochat.utils.L;
 import com.xiaomolongstudio.wochat.utils.NetUtil;
@@ -118,7 +119,7 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		String action = intent.getAction();
 		if (!TextUtils.isEmpty(action)
-				&& TextUtils.equals(action, LoginActivity.LOGIN_ACTION)) {
+				&& TextUtils.equals(action, AppConfig.LOGIN_ACTION)) {
 			mIsFirstLoginAction = true;
 		} else {
 			mIsFirstLoginAction = false;
@@ -135,7 +136,7 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		String action = intent.getAction();
 		if (!TextUtils.isEmpty(action)
-				&& TextUtils.equals(action, LoginActivity.LOGIN_ACTION)) {
+				&& TextUtils.equals(action, AppConfig.LOGIN_ACTION)) {
 			mIsFirstLoginAction = true;
 		} else {
 			mIsFirstLoginAction = false;
@@ -204,7 +205,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	String xmpp_service_name = "gmail.com";
 	int xmpp_port = 5222;
 	// String xmpp_host = "192.168.2.8";
-	String xmpp_host = "192.168.1.103";
+	String xmpp_host = "192.168.1.102";
 	public static final String XMPP_IDENTITY_NAME = "xx";
 	public static final String XMPP_IDENTITY_TYPE = "phone";
 	private static final int PACKET_TIMEOUT = 30000;
@@ -474,17 +475,16 @@ public class XMPPService extends BaseService implements EventHandler,
 			return;
 		}
 
-		String account = "test007";
-		String password = "123456";
-		// String account = PreferenceUtils.getPrefString(XXService.this,
-		// PreferenceConstants.ACCOUNT, "");
-		// String password = PreferenceUtils.getPrefString(XXService.this,
-		// PreferenceConstants.PASSWORD, "");
-		// 无保存的帐号密码时，也直接返回
-		if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-			L.d("account = null || password = null");
-			return;
-		}
+		String userName = PreferenceUtils.getPrefString(XMPPService.this,
+				PreferenceConstants.USER_NAME, "");
+		String userPassword = PreferenceUtils.getPrefString(XMPPService.this,
+				PreferenceConstants.PASSWORD, "");
+		if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userPassword))
+			// 无保存的帐号密码时，也直接返回
+			if (TextUtils.isEmpty(userName) || TextUtils.isEmpty(userPassword)) {
+				L.d("account = null || password = null");
+				return;
+			}
 		// 如果不是手动退出并且需要重新连接，则开启重连闹钟
 		// if (true) {
 		L.d("connectionFailed(): registering reconnect in " + mReconnectTimeout
@@ -634,7 +634,7 @@ public class XMPPService extends BaseService implements EventHandler,
 
 	private void registerAllListener() {
 		// actually, authenticated must be true now, or an exception must have
-		// been thrown.
+		// been thrown.fli
 		if (isAuthenticated()) {
 			registerRosterListener();// 监听联系人动态变化
 			// registerMessageListener();
