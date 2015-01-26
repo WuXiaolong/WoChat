@@ -2,9 +2,11 @@ package com.xiaomolongstudio.wochat.ui;
 
 import java.util.ArrayList;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
@@ -13,6 +15,11 @@ import com.xiaomolongstudio.wochat.service.XMPPService;
 public class BaseActivity extends FragmentActivity {
 	ServiceConnection serviceConnection;
 	public static ArrayList<BackPressHandler> mListeners = new ArrayList<BackPressHandler>();
+
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+	}
 
 	@Override
 	protected void onResume() {

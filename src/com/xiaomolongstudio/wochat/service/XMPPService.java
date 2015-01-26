@@ -1,7 +1,12 @@
 package com.xiaomolongstudio.wochat.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -12,6 +17,7 @@ import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
@@ -20,41 +26,65 @@ import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.util.StringUtils;
+import org.jivesoftware.smackx.Form;
+import org.jivesoftware.smackx.FormField;
+import org.jivesoftware.smackx.GroupChatInvitation;
+import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
 import org.jivesoftware.smackx.carbons.Carbon;
 import org.jivesoftware.smackx.forward.Forwarded;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smackx.muc.HostedRoom;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.packet.ChatStateExtension;
+import org.jivesoftware.smackx.packet.LastActivity;
+import org.jivesoftware.smackx.packet.OfflineMessageInfo;
+import org.jivesoftware.smackx.packet.OfflineMessageRequest;
+import org.jivesoftware.smackx.packet.SharedGroupsInfo;
+import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.ping.packet.Ping;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
+import org.jivesoftware.smackx.provider.DataFormProvider;
 import org.jivesoftware.smackx.provider.DelayInfoProvider;
+import org.jivesoftware.smackx.provider.DelayInformationProvider;
 import org.jivesoftware.smackx.provider.DiscoverInfoProvider;
+import org.jivesoftware.smackx.provider.DiscoverItemsProvider;
+import org.jivesoftware.smackx.provider.MUCAdminProvider;
+import org.jivesoftware.smackx.provider.MUCOwnerProvider;
+import org.jivesoftware.smackx.provider.MUCUserProvider;
+import org.jivesoftware.smackx.provider.MessageEventProvider;
+import org.jivesoftware.smackx.provider.MultipleAddressesProvider;
+import org.jivesoftware.smackx.provider.RosterExchangeProvider;
+import org.jivesoftware.smackx.provider.StreamInitiationProvider;
+import org.jivesoftware.smackx.provider.VCardProvider;
+import org.jivesoftware.smackx.provider.XHTMLExtensionProvider;
 import org.jivesoftware.smackx.receipts.DeliveryReceipt;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
+import org.jivesoftware.smackx.search.UserSearch;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.xiaomolongstudio.wochat.R;
 import com.xiaomolongstudio.wochat.smack.SmackImpl;
 import com.xiaomolongstudio.wochat.ui.BaseActivity;
 import com.xiaomolongstudio.wochat.ui.BaseActivity.BackPressHandler;
-import com.xiaomolongstudio.wochat.ui.LoginActivity;
-import com.xiaomolongstudio.wochat.ui.MainActivity;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
 import com.xiaomolongstudio.wochat.utils.AppUtils;
+import com.xiaomolongstudio.wochat.utils.FormatTools;
 import com.xiaomolongstudio.wochat.utils.L;
 import com.xiaomolongstudio.wochat.utils.NetUtil;
 import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
@@ -205,7 +235,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	String xmpp_service_name = "gmail.com";
 	int xmpp_port = 5222;
 	// String xmpp_host = "192.168.2.8";
-	String xmpp_host = "192.168.1.102";
+
 	public static final String XMPP_IDENTITY_NAME = "xx";
 	public static final String XMPP_IDENTITY_TYPE = "phone";
 	private static final int PACKET_TIMEOUT = 30000;
@@ -233,8 +263,8 @@ public class XMPPService extends BaseService implements EventHandler,
 	 */
 	public void initXMPPConnection() {
 		registerSmackProviders();
-		this.mXMPPConfig = new ConnectionConfiguration(xmpp_host, xmpp_port,
-				xmpp_service_name);
+		this.mXMPPConfig = new ConnectionConfiguration(AppConfig.XMPP_HOST,
+				xmpp_port, xmpp_service_name);
 
 		this.mXMPPConfig.setReconnectionAllowed(true);
 		this.mXMPPConfig.setSendPresence(true);
@@ -375,6 +405,233 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		connectionFailed(LOGOUT);// 手动退出
 		return isLogout;
+	}
+
+	/**
+	 * 创建/进入聊天室
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param roomName
+	 * @return
+	 */
+	public MultiUserChat createOrJoinRoom(String userName, String password,
+			String roomName) {
+		Log.d("wxl", "isRoomExists==" + isRoomExists(roomName));
+		if (isRoomExists(roomName)) {
+			return joinMultiUserChat(userName, password, roomName);
+
+		} else {
+			if (createRoom(userName, password, roomName)) {
+				return joinMultiUserChat(userName, password, roomName);
+			} else {
+				return null;
+			}
+		}
+
+	}
+
+	/**
+	 * 创建房间
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param roomName
+	 * @return
+	 */
+	public boolean createRoom(String userName, String password, String roomName) {
+		try {
+			String roomService = roomName + "@conference."
+					+ mXMPPConnection.getServiceName();// 房间域名
+
+			MultiUserChat multiUserChat = new MultiUserChat(mXMPPConnection,
+					roomService);
+			// 创建聊天室
+			multiUserChat.create(roomName);
+			Log.d("wxl", "聊天室创建");
+			// 获得聊天室的配置表单
+			Form form = multiUserChat.getConfigurationForm();
+			// 根据原始表单创建一个要提交的新表单。
+			Form submitForm = form.createAnswerForm();
+			// 向要提交的表单添加默认答复
+			for (Iterator<?> fields = form.getFields(); fields.hasNext();) {
+				FormField field = (FormField) fields.next();
+				if (!FormField.TYPE_HIDDEN.equals(field.getType())
+						&& field.getVariable() != null) {
+					// 设置默认值作为答复
+					submitForm.setDefaultAnswer(field.getVariable());
+				}
+			}
+			// 设置当前用户为聊天室的创建者
+			List<String> roomOwner = new ArrayList<String>();
+			roomOwner.add(mXMPPConnection.getUser());
+			submitForm.setAnswer("muc#roomconfig_roomowners", roomOwner);
+
+			submitForm.setAnswer("muc#roomconfig_persistentroom", true); // 持久聊天室
+			submitForm.setAnswer("muc#roomconfig_membersonly", false); // 仅对成员开放
+			submitForm.setAnswer("muc#roomconfig_allowinvites", true); // 允许邀请其他人
+
+			submitForm.setAnswer("muc#roomconfig_passwordprotectedroom", false);
+			submitForm.setAnswer("muc#roomconfig_roomsecret", "password");
+
+			submitForm.setAnswer("muc#roomconfig_enablelogging", true); // 登录房间对话
+			submitForm.setAnswer("x-muc#roomconfig_reservednick", true); // 仅允许注册的昵称登录
+			submitForm.setAnswer("x-muc#roomconfig_canchangenick", true); // 允许使用者修改昵称
+			submitForm.setAnswer("x-muc#roomconfig_registration", true); // 允许用户注册房间
+			List<String> list = new ArrayList<String>();
+			list.add("0");
+			submitForm.setAnswer("muc#roomconfig_maxusers", list); // 设置房间人数
+
+			multiUserChat.sendConfigurationForm(submitForm);// 发送已完成的表单（有默认值）到服务器来配置聊天室
+			Log.d("wxl", "讨论室:" + multiUserChat.getNickname());
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	/**
+	 * 判断聊天室是否存在
+	 * 
+	 * @param roomName
+	 * @return
+	 */
+	@SuppressLint("DefaultLocale")
+	public boolean isRoomExists(String roomName) {
+		new ServiceDiscoveryManager(mXMPPConnection);// 不加此行代码抛空指针
+		Collection<HostedRoom> hostrooms;
+		try {
+			hostrooms = MultiUserChat.getHostedRooms(mXMPPConnection,
+					"conference." + mXMPPConnection.getServiceName());
+			for (HostedRoom entry : hostrooms) {
+				if (TextUtils.equals(roomName.toLowerCase(), entry.getName())) {
+					return true;
+				}
+				Log.i("wxl",
+						"名字：" + entry.getName() + " - ID:" + entry.getJid());
+			}
+		} catch (XMPPException e) {
+			e.printStackTrace();
+		}
+
+		return false;
+	}
+
+	/**
+	 * 加入聊天室
+	 * 
+	 * @param userName
+	 * @param password
+	 * @param roomName
+	 * @return
+	 */
+
+	public MultiUserChat joinMultiUserChat(String userName, String password,
+			String roomName) {
+		String roomService = roomName + "@conference."
+				+ mXMPPConnection.getServiceName();// 房间域名
+		try {
+			// // 使用XMPPConnection创建一个MultiUserChat窗口
+			// 聊天室服务将会决定要接受的历史记录数量
+			DiscussionHistory history = new DiscussionHistory();
+			history.getMaxStanzas();
+			// history.setSince(new Date());
+			// history.getSince();
+
+			MultiUserChat mMultiUserChat = new MultiUserChat(mXMPPConnection,
+					roomService);
+			mMultiUserChat.join(userName, password, history,
+					SmackConfiguration.getPacketReplyTimeout());
+			Log.i("wxl", userName + "会议室【" + roomName + "】加入成功........");
+			return mMultiUserChat;
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.i("wxl", "异常:会议室【" + roomName + "】加入失败........");
+			return null;
+		}
+
+	}
+
+	public VCard vCard(String userId) throws Exception {
+		VCard vCard = new VCard();
+		// 加入这句代码，解决No VCard for
+		ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+				new org.jivesoftware.smackx.provider.VCardProvider());
+		vCard.load(mXMPPConnection,
+				userId + "@" + mXMPPConnection.getServiceName());
+		return vCard;
+	}
+
+	public VCard vCard() throws Exception {
+		VCard vCard = new VCard();
+		// 加入这句代码，解决No VCard for
+		ProviderManager.getInstance().addIQProvider("vCard", "vcard-temp",
+				new org.jivesoftware.smackx.provider.VCardProvider());
+
+		vCard.load(mXMPPConnection);
+		return vCard;
+	}
+
+	/**
+	 * 获取用户头像信息
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public Drawable getUserImage(String user) {
+		ByteArrayInputStream bais = null;
+		try {
+			VCard vcard;
+			if (TextUtils.equals(user, "")) {
+				vcard = vCard();
+			} else {
+				vcard = vCard(user);
+			}
+
+			if (vcard == null || vcard.getAvatar() == null)
+				return null;
+			bais = new ByteArrayInputStream(vcard.getAvatar());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (bais == null)
+			return null;
+
+		return FormatTools.getInstance().InputStream2Drawable(bais);
+	}
+
+	/**
+	 * 修改用户头像
+	 * 
+	 * @param connection
+	 * @param f
+	 * @throws XMPPException
+	 * @throws IOException
+	 */
+	public void changeImage(File file) throws Exception {
+
+		VCard vCard = vCard();
+
+		byte[] bytes;
+
+		bytes = FormatTools.getInstance().getBytesFromFile(file);
+		String encodedImage = StringUtils.encodeBase64(bytes);
+		vCard.setAvatar(bytes, encodedImage);
+		vCard.setEncodedImage(encodedImage);
+		vCard.setField("PHOTO", "<TYPE>image/jpg</TYPE><BINVAL>" + encodedImage
+				+ "</BINVAL>", true);
+		vCard.setNickName(vCard.getNickName());
+		vCard.save(mXMPPConnection);
+	}
+
+	public void changeNickName(String nickName) throws Exception {
+
+		VCard vCard = vCard();
+
+		vCard.setNickName(nickName);
+		vCard.setAvatar(vCard.getAvatar());
+		vCard.save(mXMPPConnection);
 	}
 
 	/**
@@ -728,7 +985,7 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 		Ping ping = new Ping();
 		ping.setType(Type.GET);
-		ping.setTo(xmpp_host);
+		ping.setTo(AppConfig.XMPP_HOST);
 		mPingID = ping.getPacketID();
 		mPingTimestamp = System.currentTimeMillis();
 		L.d("Ping: sending ping " + mPingID);
@@ -846,29 +1103,100 @@ public class XMPPService extends BaseService implements EventHandler,
 
 	private void registerSmackProviders() {
 		ProviderManager pm = ProviderManager.getInstance();
-		// add IQ handling
+
+		// Private Data Storage
+		pm.addIQProvider("query", "jabber:iq:private",
+				new PrivateDataManager.PrivateDataIQProvider());
+
+		// Time
+		try {
+			pm.addIQProvider("query", "jabber:iq:time",
+					Class.forName("org.jivesoftware.smackx.packet.Time"));
+		} catch (ClassNotFoundException e) {
+		}
+
+		// XHTML
+		pm.addExtensionProvider("html", "http://jabber.org/protocol/xhtml-im",
+				new XHTMLExtensionProvider());
+
+		// Roster Exchange
+		pm.addExtensionProvider("x", "jabber:x:roster",
+				new RosterExchangeProvider());
+		// Message Events
+		pm.addExtensionProvider("x", "jabber:x:event",
+				new MessageEventProvider());
+		// Chat State
+		pm.addExtensionProvider("active",
+				"http://jabber.org/protocol/chatstates",
+				new ChatStateExtension.Provider());
+		pm.addExtensionProvider("composing",
+				"http://jabber.org/protocol/chatstates",
+				new ChatStateExtension.Provider());
+		pm.addExtensionProvider("paused",
+				"http://jabber.org/protocol/chatstates",
+				new ChatStateExtension.Provider());
+		pm.addExtensionProvider("inactive",
+				"http://jabber.org/protocol/chatstates",
+				new ChatStateExtension.Provider());
+		pm.addExtensionProvider("gone",
+				"http://jabber.org/protocol/chatstates",
+				new ChatStateExtension.Provider());
+
+		// FileTransfer
+		pm.addIQProvider("si", "http://jabber.org/protocol/si",
+				new StreamInitiationProvider());
+
+		// Group Chat Invitations
+		pm.addExtensionProvider("x", "jabber:x:conference",
+				new GroupChatInvitation.Provider());
+		// Service Discovery # Items
+		pm.addIQProvider("query", "http://jabber.org/protocol/disco#items",
+				new DiscoverItemsProvider());
+		// Service Discovery # Info
 		pm.addIQProvider("query", "http://jabber.org/protocol/disco#info",
 				new DiscoverInfoProvider());
-		// add delayed delivery notifications
-		pm.addExtensionProvider("delay", "urn:xmpp:delay",
-				new DelayInfoProvider());
-		pm.addExtensionProvider("x", "jabber:x:delay", new DelayInfoProvider());
-		// add carbons and forwarding
-		pm.addExtensionProvider("forwarded", Forwarded.NAMESPACE,
-				new Forwarded.Provider());
-		pm.addExtensionProvider("sent", Carbon.NAMESPACE, new Carbon.Provider());
-		pm.addExtensionProvider("received", Carbon.NAMESPACE,
-				new Carbon.Provider());
-		// add delivery receipts
-		pm.addExtensionProvider(DeliveryReceipt.ELEMENT,
-				DeliveryReceipt.NAMESPACE, new DeliveryReceipt.Provider());
-		pm.addExtensionProvider(DeliveryReceiptRequest.ELEMENT,
-				DeliveryReceipt.NAMESPACE,
-				new DeliveryReceiptRequest.Provider());
+		// Data Forms
+		pm.addExtensionProvider("x", "jabber:x:data", new DataFormProvider());
+		// MUC User
+		pm.addExtensionProvider("x", "http://jabber.org/protocol/muc#user",
+				new MUCUserProvider());
+		// MUC Admin
+		pm.addIQProvider("query", "http://jabber.org/protocol/muc#admin",
+				new MUCAdminProvider());
+		// MUC Owner
+		pm.addIQProvider("query", "http://jabber.org/protocol/muc#owner",
+				new MUCOwnerProvider());
+		// Delayed Delivery
+		pm.addExtensionProvider("x", "jabber:x:delay",
+				new DelayInformationProvider());
+		// Version
+		try {
+			pm.addIQProvider("query", "jabber:iq:version",
+					Class.forName("org.jivesoftware.smackx.packet.Version"));
+		} catch (ClassNotFoundException e) {
+		}
+		// VCard
+		pm.addIQProvider("vCard", "vcard-temp", new VCardProvider());
+		// Offline Message Requests
+		pm.addIQProvider("offline", "http://jabber.org/protocol/offline",
+				new OfflineMessageRequest.Provider());
+		// Offline Message Indicator
+		pm.addExtensionProvider("offline",
+				"http://jabber.org/protocol/offline",
+				new OfflineMessageInfo.Provider());
+		// Last Activity
+		pm.addIQProvider("query", "jabber:iq:last", new LastActivity.Provider());
+		// User Search
+		pm.addIQProvider("query", "jabber:iq:search", new UserSearch.Provider());
+		// SharedGroupsInfo
+		pm.addIQProvider("sharedgroup",
+				"http://www.jivesoftware.org/protocol/sharedgroup",
+				new SharedGroupsInfo.Provider());
+		// JEP-33: Extended Stanza Addressing
+		pm.addExtensionProvider("addresses",
+				"http://jabber.org/protocol/address",
+				new MultipleAddressesProvider());
 		// add XMPP Ping (XEP-0199)
 		pm.addIQProvider("ping", "urn:xmpp:ping", new PingProvider());
-
-		ServiceDiscoveryManager.setIdentityName(XMPP_IDENTITY_NAME);
-		ServiceDiscoveryManager.setIdentityType(XMPP_IDENTITY_TYPE);
 	}
 }

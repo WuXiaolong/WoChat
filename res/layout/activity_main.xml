@@ -1,32 +1,56 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.xiaomolongstudio.wochat.ui.MainActivity" >
+    android:background="@android:color/white" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="添加" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="同意" />
-
-    <EditText
-        android:id="@+id/editText1"
+    <LinearLayout
+        android:id="@+id/radiogroup_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-    </EditText>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-</LinearLayout>
+        <RadioGroup
+            android:id="@+id/mRadioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/chat_room"
+                style="@style/radiogroup_text_style"
+                android:layout_weight="1"
+                android:text="聊天室" />
+
+            <TextView
+                android:id="@+id/friends"
+                style="@style/radiogroup_text_style"
+                android:layout_weight="1"
+                android:button="@null"
+                android:text="联系人" />
+
+            <TextView
+                android:id="@+id/me"
+                style="@style/radiogroup_text_style"
+                android:layout_weight="1"
+                android:text="我" />
+        </RadioGroup>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divide_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/radiogroup_layout"
+        android:background="@color/divide_line_color" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mViewPager"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/divide_line" >
+    </android.support.v4.view.ViewPager>
+
+</RelativeLayout>

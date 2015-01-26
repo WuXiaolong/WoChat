@@ -20,14 +20,17 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/MyAppTheme" >
         <activity
             android:name="com.xiaomolongstudio.wochat.ui.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
         </activity>
         <activity
             android:name="com.xiaomolongstudio.wochat.ui.LoginActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -37,6 +40,11 @@
         <activity
             android:name="com.xiaomolongstudio.wochat.ui.ChatActivity"
             android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.xiaomolongstudio.wochat.ui.ChatRoomActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
 
         <service android:name="com.xiaomolongstudio.wochat.service.XMPPService" />
