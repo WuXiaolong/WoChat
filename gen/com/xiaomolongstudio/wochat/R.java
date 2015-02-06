@@ -58,30 +58,31 @@ public final class R {
         public static final int wewin=0x7f02000b;
     }
     public static final class id {
-        public static final int action_settings=0x7f0c0019;
+        public static final int action_settings=0x7f0c001a;
         public static final int btn_login=0x7f0c0002;
-        public static final int btn_send=0x7f0c000c;
+        public static final int btn_send=0x7f0c000d;
+        public static final int button1=0x7f0c000a;
         public static final int chat_room=0x7f0c0005;
         public static final int divide_line=0x7f0c0008;
-        public static final int editText=0x7f0c000b;
+        public static final int editText=0x7f0c000c;
         public static final int friends=0x7f0c0006;
-        public static final int info=0x7f0c0015;
-        public static final int layout1=0x7f0c0014;
-        public static final int layout2=0x7f0c0016;
-        public static final int layout3=0x7f0c0017;
-        public static final int leftChatContent=0x7f0c0010;
-        public static final int leftLayout=0x7f0c000e;
-        public static final int leftUserImg=0x7f0c000f;
-        public static final int listView=0x7f0c000d;
+        public static final int info=0x7f0c0016;
+        public static final int layout1=0x7f0c0015;
+        public static final int layout2=0x7f0c0017;
+        public static final int layout3=0x7f0c0018;
+        public static final int leftChatContent=0x7f0c0011;
+        public static final int leftLayout=0x7f0c000f;
+        public static final int leftUserImg=0x7f0c0010;
+        public static final int listView=0x7f0c000e;
         public static final int mRadioGroup=0x7f0c0004;
         public static final int mViewPager=0x7f0c0009;
         public static final int me=0x7f0c0007;
         public static final int radiogroup_layout=0x7f0c0003;
-        public static final int rightChatContent=0x7f0c0013;
-        public static final int rightLayout=0x7f0c0011;
-        public static final int rightUserImg=0x7f0c0012;
-        public static final int sendlayout=0x7f0c000a;
-        public static final int title=0x7f0c0018;
+        public static final int rightChatContent=0x7f0c0014;
+        public static final int rightLayout=0x7f0c0012;
+        public static final int rightUserImg=0x7f0c0013;
+        public static final int sendlayout=0x7f0c000b;
+        public static final int title=0x7f0c0019;
         public static final int userName=0x7f0c0000;
         public static final int userPassword=0x7f0c0001;
     }
@@ -93,12 +94,13 @@ public final class R {
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int activity_main=0x7f030001;
-        public static final int chat_room=0x7f030002;
-        public static final int chat_room_item=0x7f030003;
-        public static final int chat_room_list=0x7f030004;
-        public static final int chat_room_list_item=0x7f030005;
-        public static final int friends=0x7f030006;
-        public static final int me=0x7f030007;
+        public static final int add_friends=0x7f030002;
+        public static final int chat_room=0x7f030003;
+        public static final int chat_room_item=0x7f030004;
+        public static final int chat_room_list=0x7f030005;
+        public static final int chat_room_list_item=0x7f030006;
+        public static final int friends=0x7f030007;
+        public static final int me=0x7f030008;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;
@@ -114,6 +116,7 @@ public final class R {
         public static final int request_failed=0x7f070005;
         public static final int run_bg_ticker=0x7f070004;
         public static final int status_online=0x7f070003;
+        public static final int system_notification=0x7f070008;
         public static final int xmpp_host=0x7f070006;
         public static final int xmpp_service_name=0x7f070007;
     }

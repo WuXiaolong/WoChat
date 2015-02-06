@@ -12,7 +12,9 @@ import android.app.Activity;
  * 
  */
 public class AppConfig {
-	public static final String XMPP_HOST = "192.168.2.8";
+	public static final String XMPP_HOST = "192.168.2.9";
+	public static String XMPP_SERVICE_NAME = "gmail.com";
+	public static int XMPP_PORT = 5222;
 	public static final String IMMESSAGE_KEY = "immessage.key";
 	public static final String KEY_TIME = "immessage.time";
 	public static List<Activity> TYPE_ACTIVITY = new ArrayList<Activity>();

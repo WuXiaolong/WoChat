@@ -13,6 +13,7 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.Roster.SubscriptionMode;
 import org.jivesoftware.smack.RosterEntry;
 import org.jivesoftware.smack.RosterListener;
 import org.jivesoftware.smack.SmackConfiguration;
@@ -32,8 +33,6 @@ import org.jivesoftware.smackx.FormField;
 import org.jivesoftware.smackx.GroupChatInvitation;
 import org.jivesoftware.smackx.PrivateDataManager;
 import org.jivesoftware.smackx.ServiceDiscoveryManager;
-import org.jivesoftware.smackx.carbons.Carbon;
-import org.jivesoftware.smackx.forward.Forwarded;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.HostedRoom;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -46,7 +45,6 @@ import org.jivesoftware.smackx.packet.VCard;
 import org.jivesoftware.smackx.ping.packet.Ping;
 import org.jivesoftware.smackx.ping.provider.PingProvider;
 import org.jivesoftware.smackx.provider.DataFormProvider;
-import org.jivesoftware.smackx.provider.DelayInfoProvider;
 import org.jivesoftware.smackx.provider.DelayInformationProvider;
 import org.jivesoftware.smackx.provider.DiscoverInfoProvider;
 import org.jivesoftware.smackx.provider.DiscoverItemsProvider;
@@ -59,15 +57,15 @@ import org.jivesoftware.smackx.provider.RosterExchangeProvider;
 import org.jivesoftware.smackx.provider.StreamInitiationProvider;
 import org.jivesoftware.smackx.provider.VCardProvider;
 import org.jivesoftware.smackx.provider.XHTMLExtensionProvider;
-import org.jivesoftware.smackx.receipts.DeliveryReceipt;
-import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.jivesoftware.smackx.search.UserSearch;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -76,10 +74,14 @@ import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.xiaomolongstudio.wochat.R;
 import com.xiaomolongstudio.wochat.smack.SmackImpl;
+import com.xiaomolongstudio.wochat.ui.AddFriendsActivity;
 import com.xiaomolongstudio.wochat.ui.BaseActivity;
 import com.xiaomolongstudio.wochat.ui.BaseActivity.BackPressHandler;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
@@ -93,6 +95,8 @@ import com.xiaomolongstudio.wochat.xmpp.IConnectionStatusCallback;
 import com.xiaomolongstudio.wochat.xmpp.XMPPBroadcastReceiver;
 import com.xiaomolongstudio.wochat.xmpp.XMPPBroadcastReceiver.EventHandler;
 import com.xiaomolongstudio.wochat.xmpp.XXException;
+//connection.getAccountManager().createAccount(username, password);  //创建一个用户  
+//http://blog.csdn.net/u013339223/article/details/41241771
 
 public class XMPPService extends BaseService implements EventHandler,
 		BackPressHandler {
@@ -232,8 +236,7 @@ public class XMPPService extends BaseService implements EventHandler,
 
 	// ping-pong服务器
 	// String xmpp_host = "192.168.1.103";
-	String xmpp_service_name = "gmail.com";
-	int xmpp_port = 5222;
+
 	// String xmpp_host = "192.168.2.8";
 
 	public static final String XMPP_IDENTITY_NAME = "xx";
@@ -264,7 +267,7 @@ public class XMPPService extends BaseService implements EventHandler,
 	public void initXMPPConnection() {
 		registerSmackProviders();
 		this.mXMPPConfig = new ConnectionConfiguration(AppConfig.XMPP_HOST,
-				xmpp_port, xmpp_service_name);
+				AppConfig.XMPP_PORT, AppConfig.XMPP_SERVICE_NAME);
 
 		this.mXMPPConfig.setReconnectionAllowed(true);
 		this.mXMPPConfig.setSendPresence(true);
@@ -634,31 +637,6 @@ public class XMPPService extends BaseService implements EventHandler,
 		vCard.save(mXMPPConnection);
 	}
 
-	/**
-	 * 添加好友
-	 * 
-	 * @param roster
-	 * @param toUserName
-	 * @param name
-	 * @return
-	 */
-	public boolean addUser(String toUserName, String nickname) {
-		try {
-
-			Roster roster = mXMPPConnection.getRoster();
-			String toUser = toUserName + "@" + mXMPPConnection.getServiceName();
-			// // 默认添加到【我的好友】分组
-			String groupName = "cntv";
-			Log.d("wxl", "toUser==" + toUser);
-			roster.createEntry(toUser, nickname, null);
-
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
 	// 发送消息
 	// public void sendMessage(String user, String message) {
 	// if (mSmackable != null)
@@ -676,14 +654,284 @@ public class XMPPService extends BaseService implements EventHandler,
 		return false;
 	}
 
-	// 默认显示的的Notification http://www.oschina.net/question/234345_40111
-	public void showDefaultNotification() { // 新建状态栏通知
+	/**
+	 * a添加b
+	 * 
+	 * @param toUserName
+	 * @param nickname
+	 */
 
+	public void createEntry(String userJid, String nickname) {
+		try {
+
+			Roster roster = mXMPPConnection.getRoster();
+			// // 默认添加到【我的好友】分组
+			String groupName = "Friends";
+			roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+			roster.createEntry(userJid, nickname, new String[] { groupName });
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-	// 清除通知栏
-	public void clearNotifications(String Jid) {
-		clearNotification(Jid);
+	public void add(String toJid) {
+		Presence presence = new Presence(Presence.Type.subscribed);
+
+		String fromJid = mXMPPConnection.getUser().substring(0,
+				mXMPPConnection.getUser().lastIndexOf("/"));
+		// presence.setFrom(fromJid);
+		presence.setTo(toJid);
+		Log.d("wxl", "to=" + toJid);
+		Log.d("wxl", "from=" + fromJid);
+		mXMPPConnection.sendPacket(presence);//
+		// connection是你自己的XMPPConnection链接
+	}
+
+	public void agree(String toJid) {
+		Presence presence = new Presence(Presence.Type.subscribed);
+
+		// String fromJid = mXMPPConnection.getUser().substring(0,
+		// mXMPPConnection.getUser().lastIndexOf("/"));
+		// presence.setFrom(fromJid);
+		presence.setTo(toJid);
+		Log.d("wxl", "to=" + toJid);
+		// Log.d("wxl", "from=" + fromJid);
+		mXMPPConnection.sendPacket(presence);//
+		// connection是你自己的XMPPConnection链接
+	}
+
+	public void addSubscriptionListener() {
+		PacketFilter packetFilter = new PacketTypeFilter(Presence.class);
+		PacketListener subscribeListener = new PacketListener() {
+
+			// 服务器返回给客户端的信息
+
+			@Override
+			public void processPacket(Packet packet) {
+
+				Log.i("AllPacketListener", packet.toXML());
+
+				if (packet instanceof org.jivesoftware.smack.packet.Presence) {// 好友相关
+
+					Presence presence = (Presence) packet;
+
+					// 登陆时判断好友是否在线
+
+					if (presence.isAvailable()) {
+
+						// 将在线好友添加进集合
+
+					}
+
+					org.jivesoftware.smack.packet.Presence.Type type = presence
+							.getType();
+
+					String from = presence.getFrom();
+					Log.i("wxl", "addSubscriptionListener type:" + from
+							+ "==============" + presence.getType());
+					if (type.equals(Presence.Type.subscribe)) {// 好友申请
+						showNotify(from, "请求添加您为好友", 1);
+						// 如果已经发送过好友申请，接收到对方的好友申请，说明对方同意，直接回复同意
+
+						// 如果没发送过，需要其他界面来判断是否同意
+
+					} else if (type.equals(Presence.Type.unsubscribe)) {// 删除好友
+
+						// 通知当前用户被对方删除========================
+
+					} else if (type.equals(Presence.Type.subscribed)) {// 同意添加好友
+						showNotify(from, "同意添加您为好友", 2);
+						// 加对方为好友
+
+						// 存入数据库（好友表+分组表）
+
+						// 存入集合
+
+					} else if (type.equals(Presence.Type.unsubscribed)) {// 拒绝添加好友
+
+						// 发通知告诉用户对方拒绝添加好友========================
+
+					} else if (type.equals(Presence.Type.unavailable)) {// 好友下线要更新好友列表，可以在这收到包后，发广播到指定页面更新列表
+
+						// 更新在线好友集合
+
+						// 好友头像变灰色
+
+					} else if (type.equals(Presence.Type.available)) {// 好友上线
+
+						// 更新在线好友集合
+
+						// 好友头像变亮
+
+					}
+
+				}
+
+			}
+
+		};
+		mXMPPConnection.addPacketListener(subscribeListener, packetFilter);
+	}
+
+	public String getUserJid(String userId) {
+
+		return userId + "@" + mXMPPConnection.getServiceName();
+	}
+
+	int notify = 1;
+	private RosterListener mRosterListener;
+
+	private void registerRosterListener() {
+		mRoster = mXMPPConnection.getRoster();
+		mRosterListener = new RosterListener() {
+
+			@Override
+			public void presenceChanged(Presence presence) {
+				Log.i("wxl", "presenceChanged(" + presence.getFrom() + "): "
+						+ presence.getXmlns());
+				String jabberID = AppUtils.getJabberID(presence.getFrom());
+				RosterEntry rosterEntry = mRoster.getEntry(jabberID);
+			}
+
+			@Override
+			public void entriesUpdated(Collection<String> entries) {
+				// TODO Auto-generated method stub
+				Log.i("wxl", "entriesUpdated(" + entries + ")");
+				for (String entry : entries) {
+					RosterEntry rosterEntry = mRoster.getEntry(entry);
+				}
+			}
+
+			@Override
+			public void entriesDeleted(Collection<String> entries) {
+				Log.i("wxl", "entriesDeleted(" + entries + ")");
+				for (String entry : entries) {
+
+				}
+			}
+
+			@Override
+			public void entriesAdded(Collection<String> entries) {
+				Log.i("wxl", "entriesAdded(" + entries + ")");
+				for (String entry : entries) {
+
+					RosterEntry rosterEntry = mRoster.getEntry(entry);
+
+					Log.i("wxl", "entriesAdded(" + rosterEntry.getUser() + ")");
+					// String userName = PreferenceUtils
+					// .getPrefString(XMPPService.this,
+					// PreferenceConstants.USER_NAME, "");
+					// if (entry.contains(userName))
+					// return;
+					// showNotify(entry);
+					// Presence presence = new
+					// Presence(Presence.Type.subscribed);
+					// presence.setTo(entry);
+					// String from = mXMPPConnection.getUser().substring(0,
+					// mXMPPConnection.getUser().lastIndexOf("/"));
+					// presence.setFrom(from);
+					// Log.d("wxl", "to=" + entry);
+					// Log.d("wxl", "from=" + mXMPPConnection.getUser());
+					// mXMPPConnection.sendPacket(presence);//
+					// connection是你自己的XMPPConnection链接
+
+				}
+			}
+		};
+		mRoster.addRosterListener(mRosterListener);
+	}
+
+	/**
+	 * 显示通知栏
+	 */
+	@SuppressLint("NewApi")
+	public void showNotify(String fromJid, String msg, int notify) {
+		//
+		String fromNickName = "";
+		try {
+			VCard vCard = vCard(fromJid.split("@")[0]);
+			if (vCard.getNickName() != null) {
+				fromNickName = vCard.getNickName();
+			} else {
+				fromNickName = fromJid.split("@")[0];
+			}
+		} catch (Exception e) {
+			fromNickName = fromJid.split("@")[0];
+			e.printStackTrace();
+		}
+
+		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(
+				this)
+				.setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle(getString(R.string.system_notification))
+				.setContentText(
+						Html.fromHtml("<font color=#40659c>" + fromNickName
+								+ "</font>" + msg)).setAutoCancel(true);
+
+		// Creates an explicit intent for an Activity in your app
+		Intent resultIntent = new Intent(this, AddFriendsActivity.class);
+		resultIntent.putExtra("fromJid", fromJid);
+		resultIntent.putExtra("fromNickName", fromNickName);
+
+		// resultIntent.putExtra("to", to);
+
+		TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+		stackBuilder.addParentStack(AddFriendsActivity.class);
+		stackBuilder.addNextIntent(resultIntent);
+
+		PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0,
+				resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		mBuilder.setContentIntent(resultPendingIntent);
+
+		NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		// mId allows you to update the notification later on.
+		mNotificationManager.notify(notify, mBuilder.build());
+	}
+
+	private PacketListener subscriptionPacketListener = new PacketListener() {
+
+		@Override
+		public void processPacket(Packet packet) {
+			String userName = PreferenceUtils.getPrefString(XMPPService.this,
+					PreferenceConstants.USER_NAME, "");
+			Log.d("wxl", "registerSubscriptionListener packet.getFrom()=="
+					+ packet.getFrom());
+			Log.d("wxl", " registerSubscriptionListener userName" + userName);
+			if (packet.getFrom().contains(userName))
+				return;
+
+			// 如果是自动接收所有请求，则回复一个添加信息
+			if (Roster.getDefaultSubscriptionMode().equals(
+					SubscriptionMode.accept_all)) {
+				Presence subscription = new Presence(Presence.Type.subscribe);
+				subscription.setTo(packet.getFrom());
+				mXMPPConnection.sendPacket(subscription);
+			} else {
+				// showNotify(packet.getFrom());
+
+			}
+		}
+	};
+
+	/**
+	 * 添加一个监听，监听好友添加请求。
+	 */
+	private void registerSubscriptionListener() {
+		Log.d("wxl", "registerSubscriptionListener");
+		PacketFilter filter = new PacketFilter() {
+
+			@Override
+			public boolean accept(Packet packet) {
+				if (packet instanceof Presence) {
+					Presence presence = (Presence) packet;
+					if (presence.getType().equals(Presence.Type.subscribe)) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		mXMPPConnection.addPacketListener(subscriptionPacketListener, filter);
 	}
 
 	/**
@@ -893,10 +1141,12 @@ public class XMPPService extends BaseService implements EventHandler,
 		// actually, authenticated must be true now, or an exception must have
 		// been thrown.fli
 		if (isAuthenticated()) {
-			registerRosterListener();// 监听联系人动态变化
+			// registerRosterListener();// 监听联系人动态变化
 			// registerMessageListener();
 			// registerMessageSendFailureListener();
 			registerPongListener();
+			// registerSubscriptionListener();
+			addSubscriptionListener();
 			// sendOfflineMessages();
 			if (XMPPService.this == null) {
 				mXMPPConnection.disconnect();
@@ -998,61 +1248,6 @@ public class XMPPService extends BaseService implements EventHandler,
 	}
 
 	/***************** end 处理ping服务器消息 ***********************/
-
-	private RosterListener mRosterListener;
-
-	private void registerRosterListener() {
-		mRoster = mXMPPConnection.getRoster();
-		mRosterListener = new RosterListener() {
-			private boolean isFristRoter;
-
-			@Override
-			public void presenceChanged(Presence presence) {
-				Log.i("wxl", "presenceChanged(" + presence.getFrom() + "): "
-						+ presence);
-				Log.i("wxl", "registerRosterListener presence.getType()="
-						+ presence.getType());
-				String jabberID = AppUtils.getJabberID(presence.getFrom());
-				RosterEntry rosterEntry = mRoster.getEntry(jabberID);
-			}
-
-			@Override
-			public void entriesUpdated(Collection<String> entries) {
-				// TODO Auto-generated method stub
-				Log.i("wxl", "entriesUpdated(" + entries + ")");
-				for (String entry : entries) {
-					RosterEntry rosterEntry = mRoster.getEntry(entry);
-				}
-			}
-
-			@Override
-			public void entriesDeleted(Collection<String> entries) {
-				Log.i("wxl", "entriesDeleted(" + entries + ")");
-				for (String entry : entries) {
-
-				}
-			}
-
-			@Override
-			public void entriesAdded(Collection<String> entries) {
-				Log.i("wxl", "entriesAdded(" + entries + ")");
-				for (String entry : entries) {
-					Log.i("wxl", "entriesAdded(" + entry + ")");
-
-					Presence presence = new Presence(Presence.Type.subscribed);
-					presence.setTo(entry);
-					String from = mXMPPConnection.getUser().substring(0,
-							mXMPPConnection.getUser().lastIndexOf("/"));
-					presence.setFrom(from);
-					Log.d("wxl", "to=" + entry);
-					Log.d("wxl", "from=" + mXMPPConnection.getUser());
-					mXMPPConnection.sendPacket(presence);// connection是你自己的XMPPConnection链接
-
-				}
-			}
-		};
-		mRoster.addRosterListener(mRosterListener);
-	}
 
 	public void registerPacketListener() {
 		Log.i("wxl", "registerPacketListener");

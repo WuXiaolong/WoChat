@@ -17,4 +17,6 @@
     <bool name="is_autologin">false</bool>
     <bool name="is_novisible">false</bool>
 
+    <string name="system_notification">系统通知</string>
+
 </resources>
