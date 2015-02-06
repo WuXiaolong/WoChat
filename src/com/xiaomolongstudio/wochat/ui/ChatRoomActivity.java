@@ -52,7 +52,7 @@ public class ChatRoomActivity extends BaseActionActivity implements
 	private ListView listView;
 	private ChatRoomAdapter chatRoomAdapter = null;
 	private Map<String, Object> map = null;
-	private List<Map<String, Object>> chatData = new ArrayList<Map<String, Object>>();
+	private List<IMMessage> chatData = new ArrayList<IMMessage>();
 	private android.os.Message msg;
 	// private IDanmakuView mDanmakuView;
 	private boolean isDanMu = true;
@@ -179,35 +179,28 @@ public class ChatRoomActivity extends BaseActionActivity implements
 
 		@Override
 		public void processPacket(final Packet packet) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					Message message = (Message) packet;
-					String msgForm = message.getFrom();
-					int index = msgForm.indexOf("/");
-					String form = msgForm.substring(index + 1, msgForm.length());
-					try {
-						VCard vCard = mXMPPService.vCard(form);
-						IMMessage iMMessage = new IMMessage();
-						iMMessage.setAvatar(mXMPPService.getUserImage(form));
-						try {
-							iMMessage.setNickname(vCard.getNickName());
-						} catch (Exception e) {
-							iMMessage.setNickname(form);
-						}
-						iMMessage.setMsg_from(form);
-						iMMessage.setChat_content(message.getBody());
-
-						msg = new android.os.Message();
-						msg.what = AppConfig.CHAT_ROOM_MESSAGE;
-						msg.obj = iMMessage;
-						handler.sendMessage(msg);
-					} catch (Exception e) {
-					}
-
+			Message message = (Message) packet;
+			String msgForm = message.getFrom();
+			int index = msgForm.indexOf("/");
+			String form = msgForm.substring(index + 1, msgForm.length());
+			try {
+				VCard vCard = mXMPPService.vCard(form);
+				IMMessage iMMessage = new IMMessage();
+				iMMessage.setAvatar(mXMPPService.getUserImage(form));
+				try {
+					iMMessage.setNickname(vCard.getNickName());
+				} catch (Exception e) {
+					iMMessage.setNickname(form);
 				}
+				iMMessage.setMsg_from(form);
+				iMMessage.setChat_content(message.getBody());
 
-			}).start();
+				msg = new android.os.Message();
+				msg.what = AppConfig.CHAT_ROOM_MESSAGE;
+				msg.obj = iMMessage;
+				handler.sendMessage(msg);
+			} catch (Exception e) {
+			}
 
 			// 接收来自聊天室的聊天信息
 			// String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -226,18 +219,18 @@ public class ChatRoomActivity extends BaseActionActivity implements
 	}
 
 	class ChatRoomAdapter extends BaseAdapter {
-		List<Map<String, Object>> mChatData;
+		List<IMMessage> mChatData;
 		ViewHolder viewHolder;
 
-		public List<Map<String, Object>> getmChatData() {
+		public List<IMMessage> getmChatData() {
 			return mChatData;
 		}
 
-		public void setmChatData(List<Map<String, Object>> mChatData) {
+		public void setmChatData(List<IMMessage> mChatData) {
 			this.mChatData = mChatData;
 		}
 
-		ChatRoomAdapter(List<Map<String, Object>> mChatData) {
+		ChatRoomAdapter(List<IMMessage> mChatData) {
 			this.mChatData = mChatData;
 		}
 
@@ -282,18 +275,18 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			}
 			String userName = PreferenceUtils.getPrefString(
 					ChatRoomActivity.this, PreferenceConstants.USER_NAME, "");
-			if ((userName).equals(mChatData.get(position).get("form")
+			if ((userName).equals(mChatData.get(position).getMsg_from()
 					.toString())) {
 				viewHolder.rightLayout.setVisibility(View.VISIBLE);
 				viewHolder.leftLayout.setVisibility(View.GONE);
 				viewHolder.rightChatContent.setText(mChatData.get(position)
-						.get("chatContent").toString());
-				if (mChatData.get(position).get("avatar") == null) {
+						.getChat_content().toString());
+				if (mChatData.get(position).getAvatar() == null) {
 					viewHolder.rightUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
 				} else {
 					viewHolder.rightUserImg.setBackground((Drawable) mChatData
-							.get(position).get("avatar"));
+							.get(position).getAvatar());
 				}
 				viewHolder.rightUserImg
 						.setOnClickListener(new OnClickListener() {
@@ -307,19 +300,20 @@ public class ChatRoomActivity extends BaseActionActivity implements
 								// mChatData.get(position)
 								// .get("form").toString());
 								// startActivity(intent);
+
 							}
 						});
 			} else {
 				viewHolder.rightLayout.setVisibility(View.GONE);
 				viewHolder.leftLayout.setVisibility(View.VISIBLE);
 				viewHolder.leftChatContent.setText(mChatData.get(position)
-						.get("chatContent").toString());
-				if (mChatData.get(position).get("avatar") == null) {
+						.getChat_content().toString());
+				if (mChatData.get(position).getAvatar() == null) {
 					viewHolder.leftUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
 				} else {
 					viewHolder.leftUserImg.setBackground((Drawable) mChatData
-							.get(position).get("avatar"));
+							.get(position).getAvatar());
 				}
 				viewHolder.leftUserImg
 						.setOnClickListener(new OnClickListener() {
@@ -333,6 +327,15 @@ public class ChatRoomActivity extends BaseActionActivity implements
 								// mChatData.get(position)
 								// .get("form").toString());
 								// startActivity(intent);
+								Log.d("wxl",
+										"Msg_from="
+												+ mChatData.get(position)
+														.getMsg_from()
+														.toString());
+								mXMPPService.createEntry(
+										mXMPPService.getUserJid(mChatData
+												.get(position).getMsg_from()
+												.toString()), "nnnn");
 							}
 						});
 			}
@@ -543,14 +546,14 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case AppConfig.CHAT_ROOM_MESSAGE:
-				chatData = new ArrayList<Map<String, Object>>();
+				// chatData = new ArrayList<Map<String, Object>>();
 				map = new HashMap<String, Object>();
 				IMMessage iMMessage = (IMMessage) msg.obj;
 
 				map.put("form", iMMessage.getMsg_from());
 				map.put("avatar", iMMessage.getAvatar());
 				map.put("chatContent", iMMessage.getChat_content());
-				chatData.add(map);
+				chatData.add(iMMessage);
 
 				if (chatRoomAdapter == null) {
 					chatRoomAdapter = new ChatRoomAdapter(chatData);

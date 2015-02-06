@@ -46,6 +46,11 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" >
         </activity>
+        <activity
+            android:name="com.xiaomolongstudio.wochat.ui.AddFriendsActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateHidden" >
+        </activity>
 
         <service android:name="com.xiaomolongstudio.wochat.service.XMPPService" />
 

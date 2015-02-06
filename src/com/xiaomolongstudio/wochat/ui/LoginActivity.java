@@ -84,7 +84,6 @@ public class LoginActivity extends BaseActivity {
 										userPassword.getText().toString());
 								startActivity(new Intent(LoginActivity.this,
 										MainActivity.class));
-								mXxService.showDefaultNotification();
 								finish();
 							} else if (connectedState == XMPPService.DISCONNECTED)
 								T.showLong(LoginActivity.this,
