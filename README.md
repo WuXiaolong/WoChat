@@ -1,6 +1,10 @@
 # WoChat
 Android基于XMPP即时通讯应用
 
+效果预览
+===========================
+![](https://github.com/WuXiaolong/WoChat/raw/master/screenshots/screenshots.gif)
+
 更多交流
 ===========================
 ###Android技术交流群
