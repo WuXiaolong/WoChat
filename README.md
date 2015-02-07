@@ -5,6 +5,28 @@ Android基于XMPP即时通讯应用
 ===========================
 ![](https://github.com/WuXiaolong/WoChat/raw/master/screenshots/screenshots.gif)
 
+更新日志
+===========================
+v0.1（2015-1-26）
+* 框架
+* 登录
+* 断线重连
+* 聊天室
+
+v0.2（2015-2-7）
+* 加好友、推送通知
+* 好友列表
+
+系列教程（由于时间紧，此系列教程后续跟上）
+===========================
+* Android基于XMPP即时通讯应用（一）【Openfire服务器配置】
+* Android基于XMPP即时通讯应用（二）【登录】
+* Android基于XMPP即时通讯应用（三）【断线重连】
+* Android基于XMPP即时通讯应用（四）【修改头像、昵称】
+* Android基于XMPP即时通讯应用（五）【聊天室】
+* Android基于XMPP即时通讯应用（六）【加好友】
+* Android基于XMPP即时通讯应用（七）【好友列表】
+
 更多交流
 ===========================
 ###Android技术交流群
