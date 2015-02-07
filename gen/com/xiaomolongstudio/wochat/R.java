@@ -58,11 +58,15 @@ public final class R {
         public static final int wewin=0x7f02000b;
     }
     public static final class id {
-        public static final int action_settings=0x7f0c001a;
+        public static final int action_settings=0x7f0c001f;
         public static final int btn_login=0x7f0c0002;
         public static final int btn_send=0x7f0c000d;
         public static final int button1=0x7f0c000a;
         public static final int chat_room=0x7f0c0005;
+        public static final int contactitem_avatar_iv=0x7f0c001c;
+        public static final int contactitem_catalog=0x7f0c001a;
+        public static final int contactitem_layout=0x7f0c001b;
+        public static final int contactitem_nick=0x7f0c001d;
         public static final int divide_line=0x7f0c0008;
         public static final int editText=0x7f0c000c;
         public static final int friends=0x7f0c0006;
@@ -74,6 +78,7 @@ public final class R {
         public static final int leftLayout=0x7f0c000f;
         public static final int leftUserImg=0x7f0c0010;
         public static final int listView=0x7f0c000e;
+        public static final int listview=0x7f0c001e;
         public static final int mRadioGroup=0x7f0c0004;
         public static final int mViewPager=0x7f0c0009;
         public static final int me=0x7f0c0007;
@@ -99,8 +104,9 @@ public final class R {
         public static final int chat_room_item=0x7f030004;
         public static final int chat_room_list=0x7f030005;
         public static final int chat_room_list_item=0x7f030006;
-        public static final int friends=0x7f030007;
-        public static final int me=0x7f030008;
+        public static final int contact_item=0x7f030007;
+        public static final int contacts=0x7f030008;
+        public static final int me=0x7f030009;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;
@@ -111,8 +117,14 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f070002;
+        public static final int app_dir=0x7f07000a;
         public static final int app_name=0x7f070000;
+        public static final int db_dir=0x7f07000b;
+        /**  数据库和文件路径 
+         */
+        public static final int dir=0x7f070009;
         public static final int hello_world=0x7f070001;
+        public static final int img_dir=0x7f07000c;
         public static final int request_failed=0x7f070005;
         public static final int run_bg_ticker=0x7f070004;
         public static final int status_online=0x7f070003;
@@ -121,7 +133,7 @@ public final class R {
         public static final int xmpp_service_name=0x7f070007;
     }
     public static final class style {
-        public static final int ActionbarTitleTextStyle=0x7f0a0005;
+        public static final int ActionbarTitleTextStyle=0x7f0a0008;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -143,14 +155,17 @@ public final class R {
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0a0001;
-        public static final int HalfTranslucent=0x7f0a0009;
-        public static final int MyActionBarStyle=0x7f0a0004;
+        public static final int HalfTranslucent=0x7f0a000c;
+        public static final int MMFontTitleInList=0x7f0a0005;
+        public static final int MMListCatalog=0x7f0a0003;
+        public static final int MMListItem=0x7f0a0004;
+        public static final int MyActionBarStyle=0x7f0a0007;
         /**  <item name="android:actionBarWidgetTheme">@style/Theme.stylingactionbar.widget</item> 
          */
-        public static final int MyAppTheme=0x7f0a0003;
-        public static final int MyDropDownListView=0x7f0a0007;
-        public static final int PopupMenu=0x7f0a0008;
-        public static final int Theme_stylingactionbar_widget=0x7f0a0006;
+        public static final int MyAppTheme=0x7f0a0006;
+        public static final int MyDropDownListView=0x7f0a000a;
+        public static final int PopupMenu=0x7f0a000b;
+        public static final int Theme_stylingactionbar_widget=0x7f0a0009;
         public static final int radiogroup_text_style=0x7f0a0002;
     }
 }

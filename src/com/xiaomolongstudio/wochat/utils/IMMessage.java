@@ -5,23 +5,47 @@ import android.graphics.drawable.Drawable;
 public class IMMessage {
 	public static final String IMMESSAGE_KEY = "immessage.key";
 	public static final String KEY_TIME = "immessage.time";
+	public static final String CHAT_CONTENT = "chat_content";
+	public static final String MSG_FROM = "msg_from";
+	public static final String NICKNAME = "nickname";
+	public static final String MSG_TIME = "msg_time";
+	public static final String AVATAR = "avatar";
+	public static final String ROOMID = "roomId";
 	public static final int SUCCESS = 0;
 	public static final int ERROR = 1;
 	private String chat_content;
 	private String msg_from;
+	private String roomId;
 	private String nickname;
 	private String msg_time;
-	private Drawable avatar;
+	private byte[] avatar;
+	private Drawable drawableAvatar;
 
 	public IMMessage() {
 		super();
 	}
 
-	public Drawable getAvatar() {
+	public String getRoomId() {
+		return roomId;
+	}
+
+	public void setRoomId(String roomId) {
+		this.roomId = roomId;
+	}
+
+	public Drawable getDrawableAvatar() {
+		return drawableAvatar;
+	}
+
+	public void setDrawableAvatar(Drawable drawableAvatar) {
+		this.drawableAvatar = drawableAvatar;
+	}
+
+	public byte[] getAvatar() {
 		return avatar;
 	}
 
-	public void setAvatar(Drawable avatar) {
+	public void setAvatar(byte[] avatar) {
 		this.avatar = avatar;
 	}
 

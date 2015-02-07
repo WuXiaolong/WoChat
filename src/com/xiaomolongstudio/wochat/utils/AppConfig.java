@@ -26,6 +26,7 @@ public class AppConfig {
 	public static final String LOGIN_ACTION = "cn.cntv.tvt.action.LOGIN";
 	public static final String REGISTER_ACTION = "cn.cntv.tvt.action.REGISTER";
 	public static final String CHATROOM_ACTION = "cn.cntv.tvt.action.CHATROOM";
+	public static final String CONTACTS_ACTION = "cn.cntv.tvt.action.Contacts";
 	public static final String FRIEND_MSG_ACTION = "cn.cntv.tvt.action.FRIEND_MSG";
 	public static final String MAIN_ACTION = "cn.cntv.tvt.action.MAIN";
 }

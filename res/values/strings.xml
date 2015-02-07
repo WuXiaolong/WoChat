@@ -18,5 +18,10 @@
     <bool name="is_novisible">false</bool>
 
     <string name="system_notification">系统通知</string>
+    <!-- 数据库和文件路径 -->
+    <string name="dir">/WoChat</string>
+    <string name="app_dir">/app</string>
+    <string name="db_dir">/database</string>
+    <string name="img_dir">/img</string>
 
 </resources>

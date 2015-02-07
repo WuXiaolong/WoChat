@@ -40,8 +40,9 @@ public class AddFriendsActivity extends BaseActionActivity {
 				.getStringExtra("fromNickName");
 		Log.i("wxl", "fromJid=" + fromJid);
 		Log.i("wxl", "fromNickName=" + fromNickName);
-//		mXMPPService.createEntry(fromJid, fromNickName);
-		mXMPPService.agree(fromJid);
+		String groupName = "Friends";
+		mXMPPService.createEntry(fromJid, fromNickName);
+		// mXMPPService.agree(fromJid);
 	}
 
 	private XMPPService mXMPPService;

@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.xiaomolongstudio.wochat.R;
 import com.xiaomolongstudio.wochat.adapter.MyFragmentPagerAdapter;
 import com.xiaomolongstudio.wochat.fragment.ChatRoomListFragment;
-import com.xiaomolongstudio.wochat.fragment.FriendsFragment;
+import com.xiaomolongstudio.wochat.fragment.ContactsFragment;
 import com.xiaomolongstudio.wochat.fragment.MeFragment;
 import com.xiaomolongstudio.wochat.service.XMPPService;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity implements EventHandler {
 		fragmentsList = new ArrayList<Fragment>();
 
 		fragmentsList.add(new ChatRoomListFragment());
-		fragmentsList.add(new FriendsFragment());
+		fragmentsList.add(new ContactsFragment());
 		fragmentsList.add(new MeFragment());
 
 		mViewPager.setAdapter(new MyFragmentPagerAdapter(

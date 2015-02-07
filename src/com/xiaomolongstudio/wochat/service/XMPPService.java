@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketCollector;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.Roster;
 import org.jivesoftware.smack.Roster.SubscriptionMode;
@@ -21,11 +22,13 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.PacketFilter;
+import org.jivesoftware.smack.filter.PacketIDFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.IQ.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.RosterPacket;
 import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.util.StringUtils;
 import org.jivesoftware.smackx.Form;
@@ -272,7 +275,7 @@ public class XMPPService extends BaseService implements EventHandler,
 		this.mXMPPConfig.setReconnectionAllowed(true);
 		this.mXMPPConfig.setSendPresence(true);
 		this.mXMPPConfig.setCompressionEnabled(false); // disable for now
-		this.mXMPPConfig.setDebuggerEnabled(true);
+		this.mXMPPConfig.setDebuggerEnabled(false);
 		this.mXMPPConfig
 				.setSecurityMode(ConnectionConfiguration.SecurityMode.required);
 
@@ -517,7 +520,6 @@ public class XMPPService extends BaseService implements EventHandler,
 		} catch (XMPPException e) {
 			e.printStackTrace();
 		}
-
 		return false;
 	}
 
@@ -536,15 +538,15 @@ public class XMPPService extends BaseService implements EventHandler,
 				+ mXMPPConnection.getServiceName();// 房间域名
 		try {
 			// // 使用XMPPConnection创建一个MultiUserChat窗口
-			// 聊天室服务将会决定要接受的历史记录数量
+			// 设置新加入成员要接受的服务器聊天室的聊天记录数
 			DiscussionHistory history = new DiscussionHistory();
-			history.getMaxStanzas();
+			// history.getMaxStanzas();
 			// history.setSince(new Date());
 			// history.getSince();
-
+			history.setMaxStanzas(0);
 			MultiUserChat mMultiUserChat = new MultiUserChat(mXMPPConnection,
 					roomService);
-			mMultiUserChat.join(userName, password, history,
+			mMultiUserChat.join(userName, password, null,
 					SmackConfiguration.getPacketReplyTimeout());
 			Log.i("wxl", userName + "会议室【" + roomName + "】加入成功........");
 			return mMultiUserChat;
@@ -674,12 +676,80 @@ public class XMPPService extends BaseService implements EventHandler,
 		}
 	}
 
+	public void createEntry(String user, String name, String[] groups)
+			throws XMPPException {
+
+		// Create and send roster entrycreation packet.
+
+		RosterPacket rosterPacket = new RosterPacket();
+
+		rosterPacket.setType(IQ.Type.SET);
+
+		RosterPacket.Item item = new RosterPacket.Item(user, name);
+
+		if (groups != null) {
+
+			for (String group : groups) {
+
+				if (group != null && group.trim().length() > 0) {
+
+					item.addGroupName(group);
+
+				}
+
+			}
+
+		}
+
+		rosterPacket.addRosterItem(item);
+
+		// Wait up to a certain number of secondsfor a reply from the server.
+
+		PacketCollector collector = mXMPPConnection.createPacketCollector(
+
+		new PacketIDFilter(rosterPacket.getPacketID()));
+
+		mXMPPConnection.sendPacket(rosterPacket);
+
+		IQ response = (IQ) collector.nextResult(SmackConfiguration
+				.getPacketReplyTimeout());
+
+		collector.cancel();
+
+		if (response == null) {
+
+			throw new XMPPException("No response from the server.");
+
+		}
+
+		// If the server replied with an error,throw an exception.
+
+		else if (response.getType() == IQ.Type.ERROR) {
+
+			throw new XMPPException(response.getError());
+
+		}
+
+		// Create a presence subscription packetand send.
+
+		Presence presencePacket = new Presence(Presence.Type.subscribed);
+
+		presencePacket.setTo(user);
+
+		mXMPPConnection.sendPacket(presencePacket);
+
+	}
+
+	public Roster roster() {
+		return mXMPPConnection.getRoster();
+	}
+
 	public void add(String toJid) {
 		Presence presence = new Presence(Presence.Type.subscribed);
 
 		String fromJid = mXMPPConnection.getUser().substring(0,
 				mXMPPConnection.getUser().lastIndexOf("/"));
-		// presence.setFrom(fromJid);
+		presence.setFrom(fromJid);
 		presence.setTo(toJid);
 		Log.d("wxl", "to=" + toJid);
 		Log.d("wxl", "from=" + fromJid);
@@ -687,12 +757,25 @@ public class XMPPService extends BaseService implements EventHandler,
 		// connection是你自己的XMPPConnection链接
 	}
 
+	public void send(String toJid) {
+		Presence presence = new Presence(Presence.Type.subscribe);
+
+		String fromJid = mXMPPConnection.getUser().substring(0,
+				mXMPPConnection.getUser().lastIndexOf("/"));
+		presence.setFrom(fromJid);
+		presence.setTo(toJid);
+		Log.d("wxl", "to=" + toJid);
+		// Log.d("wxl", "from=" + fromJid);
+		mXMPPConnection.sendPacket(presence);//
+		// connection是你自己的XMPPConnection链接
+	}
+
 	public void agree(String toJid) {
 		Presence presence = new Presence(Presence.Type.subscribed);
 
-		// String fromJid = mXMPPConnection.getUser().substring(0,
-		// mXMPPConnection.getUser().lastIndexOf("/"));
-		// presence.setFrom(fromJid);
+		String fromJid = mXMPPConnection.getUser().substring(0,
+				mXMPPConnection.getUser().lastIndexOf("/"));
+		presence.setFrom(fromJid);
 		presence.setTo(toJid);
 		Log.d("wxl", "to=" + toJid);
 		// Log.d("wxl", "from=" + fromJid);
@@ -726,11 +809,11 @@ public class XMPPService extends BaseService implements EventHandler,
 					org.jivesoftware.smack.packet.Presence.Type type = presence
 							.getType();
 
-					String from = presence.getFrom();
-					Log.i("wxl", "addSubscriptionListener type:" + from
+					String fromJid = presence.getFrom();
+					Log.i("wxl", "addSubscriptionListener type:" + fromJid
 							+ "==============" + presence.getType());
 					if (type.equals(Presence.Type.subscribe)) {// 好友申请
-						showNotify(from, "请求添加您为好友", 1);
+						showNotify(fromJid, "请求添加您为好友", 1);
 						// 如果已经发送过好友申请，接收到对方的好友申请，说明对方同意，直接回复同意
 
 						// 如果没发送过，需要其他界面来判断是否同意
@@ -740,7 +823,7 @@ public class XMPPService extends BaseService implements EventHandler,
 						// 通知当前用户被对方删除========================
 
 					} else if (type.equals(Presence.Type.subscribed)) {// 同意添加好友
-						showNotify(from, "同意添加您为好友", 2);
+						// showNotify(fromJid, "同意添加您为好友", 2);
 						// 加对方为好友
 
 						// 存入数据库（好友表+分组表）

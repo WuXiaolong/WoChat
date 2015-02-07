@@ -1,6 +1,8 @@
 package com.xiaomolongstudio.wochat.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +19,6 @@ import org.jivesoftware.smackx.packet.VCard;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xiaomolongstudio.wochat.R;
+import com.xiaomolongstudio.wochat.db.MessageManager;
 import com.xiaomolongstudio.wochat.service.XMPPService;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
 import com.xiaomolongstudio.wochat.utils.IMMessage;
@@ -44,6 +46,7 @@ import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
 import com.xiaomolongstudio.wochat.utils.PreferenceUtils;
 import com.xiaomolongstudio.wochat.xmpp.IConnectionStatusCallback;
 
+@SuppressLint("SimpleDateFormat")
 public class ChatRoomActivity extends BaseActionActivity implements
 		OnClickListener {
 	private MultiUserChat mMultiUserChat = null;
@@ -52,12 +55,8 @@ public class ChatRoomActivity extends BaseActionActivity implements
 	private ListView listView;
 	private ChatRoomAdapter chatRoomAdapter = null;
 	private Map<String, Object> map = null;
-	private List<IMMessage> chatData = new ArrayList<IMMessage>();
+	private List<IMMessage> chatData;
 	private android.os.Message msg;
-	// private IDanmakuView mDanmakuView;
-	private boolean isDanMu = true;
-
-	// private BaseDanmakuParser mParser;
 
 	@SuppressLint("HandlerLeak")
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +64,7 @@ public class ChatRoomActivity extends BaseActionActivity implements
 		super.bindXMPPService(AppConfig.CHATROOM_ACTION, mServiceConnection);
 		this.setContentView(R.layout.chat_room);
 		initView();
-		// initDanmaku();
+
 	}
 
 	@SuppressLint("NewApi")
@@ -73,57 +72,8 @@ public class ChatRoomActivity extends BaseActionActivity implements
 		actionBar.setTitle("聊天室");
 		listView = (ListView) findViewById(R.id.listView);
 		editText = (EditText) findViewById(R.id.editText);
-		// mDanmakuView = (DanmakuSurfaceView) findViewById(R.id.sv_danmaku);
 		findViewById(R.id.btn_send).setOnClickListener(this);
-
 	}
-
-	// private void initDanmaku() {
-	// if (mDanmakuView != null) {
-	// mParser = createParser(this.getResources().openRawResource(
-	// R.raw.comments));
-	// mDanmakuView.setCallback(new Callback() {
-	//
-	// public void updateTimer(DanmakuTimer timer) {
-	//
-	// }
-	//
-	// public void prepared() {
-	// mDanmakuView.start();
-	// }
-	// });
-	// mDanmakuView.prepare(mParser);
-	// mDanmakuView.showFPS(true);
-	// mDanmakuView.enableDanmakuDrawingCache(true);
-	// }
-	// }
-	//
-	// private BaseDanmakuParser createParser(InputStream stream) {
-	//
-	// if (stream == null) {
-	// return new BaseDanmakuParser() {
-	//
-	// @Override
-	// protected Danmakus parse() {
-	// return new Danmakus();
-	// }
-	// };
-	// }
-	//
-	// ILoader loader = DanmakuLoaderFactory
-	// .create(DanmakuLoaderFactory.TAG_BILI);
-	//
-	// try {
-	// loader.load(stream);
-	// } catch (IllegalDataException e) {
-	// e.printStackTrace();
-	// }
-	// BaseDanmakuParser parser = new BiliDanmukuParser();
-	// IDataSource<?> dataSource = loader.getDataSource();
-	// parser.load(dataSource);
-	// return parser;
-	//
-	// }
 
 	/**
 	 * 初始化聊天室
@@ -154,67 +104,13 @@ public class ChatRoomActivity extends BaseActionActivity implements
 
 	private void sendMessage(String messageStr) {
 		try {
-			// String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-			// .format(new Date());
-			// Message message = new Message();
-			// message.setProperty(AppConfig.KEY_TIME, "111");
-			// message.setBody(messageStr);
 			mMultiUserChat.sendMessage(messageStr);
 			editText.setText("");
+			rejoin = false;
 		} catch (Exception e) {
 			Toast.makeText(ChatRoomActivity.this, "发送失败", Toast.LENGTH_SHORT)
 					.show();
 			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * 会议室消息监听类
-	 * 
-	 * @author Administrator
-	 * 
-	 */
-
-	public class CustomPacketListener implements PacketListener {
-
-		@Override
-		public void processPacket(final Packet packet) {
-			Message message = (Message) packet;
-			String msgForm = message.getFrom();
-			int index = msgForm.indexOf("/");
-			String form = msgForm.substring(index + 1, msgForm.length());
-			try {
-				VCard vCard = mXMPPService.vCard(form);
-				IMMessage iMMessage = new IMMessage();
-				iMMessage.setAvatar(mXMPPService.getUserImage(form));
-				try {
-					iMMessage.setNickname(vCard.getNickName());
-				} catch (Exception e) {
-					iMMessage.setNickname(form);
-				}
-				iMMessage.setMsg_from(form);
-				iMMessage.setChat_content(message.getBody());
-
-				msg = new android.os.Message();
-				msg.what = AppConfig.CHAT_ROOM_MESSAGE;
-				msg.obj = iMMessage;
-				handler.sendMessage(msg);
-			} catch (Exception e) {
-			}
-
-			// 接收来自聊天室的聊天信息
-			// String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-			// .format(new Date());
-			// MucHistory mh = new MucHistory();
-			// mh.setUserAccount(account);
-			// String from = StringUtils.parseResource(message.getFrom());
-			// String fromRoomName = StringUtils.parseName(message.getFrom());
-			// mh.setMhRoomName(fromRoomName);
-			// mh.setFriendAccount(from);
-			// mh.setMhInfo(message.getBody());
-			// mh.setMhTime(time);
-			// mh.setMhType("left");
-
 		}
 	}
 
@@ -285,8 +181,9 @@ public class ChatRoomActivity extends BaseActionActivity implements
 					viewHolder.rightUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
 				} else {
-					viewHolder.rightUserImg.setBackground((Drawable) mChatData
-							.get(position).getAvatar());
+					// viewHolder.rightUserImg.setBackground((Drawable)
+					// mChatData
+					// .get(position).getAvatar());
 				}
 				viewHolder.rightUserImg
 						.setOnClickListener(new OnClickListener() {
@@ -312,8 +209,8 @@ public class ChatRoomActivity extends BaseActionActivity implements
 					viewHolder.leftUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
 				} else {
-					viewHolder.leftUserImg.setBackground((Drawable) mChatData
-							.get(position).getAvatar());
+					// viewHolder.leftUserImg.setBackground((Drawable) mChatData
+					// .get(position).getAvatar());
 				}
 				viewHolder.leftUserImg
 						.setOnClickListener(new OnClickListener() {
@@ -327,15 +224,12 @@ public class ChatRoomActivity extends BaseActionActivity implements
 								// mChatData.get(position)
 								// .get("form").toString());
 								// startActivity(intent);
-								Log.d("wxl",
-										"Msg_from="
-												+ mChatData.get(position)
-														.getMsg_from()
-														.toString());
+								Toast.makeText(getApplicationContext(),
+										"好友请求已发出", Toast.LENGTH_LONG).show();
 								mXMPPService.createEntry(
 										mXMPPService.getUserJid(mChatData
 												.get(position).getMsg_from()
-												.toString()), "nnnn");
+												.toString()), "nickname");
 							}
 						});
 			}
@@ -457,12 +351,6 @@ public class ChatRoomActivity extends BaseActionActivity implements
 	}
 
 	@Override
-	protected void onPause() {
-		super.onPause();
-
-	}
-
-	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		Log.i("wxl", "onDestroy");
@@ -474,12 +362,9 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			mMultiUserChat.leave();
 		}
 
-		// if (mDanmakuView != null) {
-		// // dont forget release!
-		// mDanmakuView.release();
-		// }
 	}
 
+	private boolean rejoin = false;
 	private XMPPService mXMPPService;
 	ServiceConnection mServiceConnection = new ServiceConnection() {
 
@@ -497,6 +382,8 @@ public class ChatRoomActivity extends BaseActionActivity implements
 								Log.i("wxl", "CONNECTED");
 								Toast.makeText(ChatRoomActivity.this, "用户上线",
 										Toast.LENGTH_LONG).show();
+								// 重新加入房间
+								rejoin = true;
 								initRoom();
 								break;
 							case XMPPService.CONNECTING:
@@ -530,6 +417,15 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			}
 			Log.i("wxl", "isAuthenticated=" + mXMPPService.isAuthenticated());
 			initRoom();
+			// List<IMMessage> messageList = MessageManager.getInstance(
+			// ChatRoomActivity.this).getMessageListByroomId(roomName, 1,
+			// 10);
+			// for (int i = 0; i < messageList.size(); i++) {
+			// Log.d("wxl",
+			// "messageList------------------"
+			// + messageList.get(i).getChat_content());
+			// }
+
 		}
 
 		@Override
@@ -539,6 +435,64 @@ public class ChatRoomActivity extends BaseActionActivity implements
 		}
 
 	};
+
+	/**
+	 * 会议室消息监听类
+	 * 
+	 * @author Administrator
+	 * 
+	 */
+
+	public class CustomPacketListener implements PacketListener {
+
+		@Override
+		public void processPacket(final Packet packet) {
+			if (!rejoin) {
+				Message message = (Message) packet;
+				String msgForm = message.getFrom();
+				int index = msgForm.indexOf("/");
+				String form = msgForm.substring(index + 1, msgForm.length());
+				Log.d("wxl", "CustomPacketListener-------Body-----------"
+						+ message.getBody());
+				try {
+					VCard vCard = mXMPPService.vCard(form);
+					IMMessage iMMessage = new IMMessage();
+					iMMessage.setAvatar(vCard.getAvatar());
+					// iMMessage.setAvatar(mXMPPService.getUserImage(form));
+					try {
+						iMMessage.setNickname(vCard.getNickName());
+					} catch (Exception e) {
+						iMMessage.setNickname(form);
+					}
+					iMMessage.setRoomId(roomName);
+					iMMessage.setMsg_from(form);
+					iMMessage.setChat_content(message.getBody());
+					String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+							.format(new Date());
+					iMMessage.setMsg_time(time);
+					msg = new android.os.Message();
+					msg.what = AppConfig.CHAT_ROOM_MESSAGE;
+					msg.obj = iMMessage;
+					handler.sendMessage(msg);
+				} catch (Exception e) {
+				}
+			}
+			// 接收来自聊天室的聊天信息
+			// String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+			// .format(new Date());
+			// MucHistory mh = new MucHistory();
+			// mh.setUserAccount(account);
+			// String from = StringUtils.parseResource(message.getFrom());
+			// String fromRoomName = StringUtils.parseName(message.getFrom());
+			// mh.setMhRoomName(fromRoomName);
+			// mh.setFriendAccount(from);
+			// mh.setMhInfo(message.getBody());
+			// mh.setMhTime(time);
+			// mh.setMhType("left");
+
+		}
+	}
+
 	@SuppressLint("HandlerLeak")
 	Handler handler = new Handler() {
 
@@ -546,7 +500,7 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case AppConfig.CHAT_ROOM_MESSAGE:
-				// chatData = new ArrayList<Map<String, Object>>();
+				chatData = new ArrayList<IMMessage>();
 				map = new HashMap<String, Object>();
 				IMMessage iMMessage = (IMMessage) msg.obj;
 
@@ -554,6 +508,9 @@ public class ChatRoomActivity extends BaseActionActivity implements
 				map.put("avatar", iMMessage.getAvatar());
 				map.put("chatContent", iMMessage.getChat_content());
 				chatData.add(iMMessage);
+
+				// MessageManager.getInstance(ChatRoomActivity.this)
+				// .saveIMMessage(iMMessage);
 
 				if (chatRoomAdapter == null) {
 					chatRoomAdapter = new ChatRoomAdapter(chatData);
@@ -563,26 +520,6 @@ public class ChatRoomActivity extends BaseActionActivity implements
 					chatRoomAdapter.notifyDataSetChanged();
 				}
 				listView.setSelection(listView.getCount() - 1);
-
-				/**
-				 * 弹幕
-				 */
-				// if (mDanmakuView == null || !mDanmakuView.isPrepared())
-				// return;
-				// BaseDanmaku danmaku = DanmakuFactory
-				// .createDanmaku(BaseDanmaku.TYPE_SCROLL_RL);
-				//
-				// danmaku.text = iMMessage.getChat_content();
-				// danmaku.padding = 5;
-				// danmaku.priority = 1;
-				// danmaku.time = mDanmakuView.getCurrentTime() + 200;
-				// danmaku.textSize = 25f * (mParser.getDisplayer().getDensity()
-				// - 0.6f);
-				// danmaku.textColor = Color.BLUE;
-				// danmaku.textShadowColor = Color.WHITE;
-				// // danmaku.underlineColor = Color.GREEN;
-				// // danmaku.borderColor = Color.GREEN;
-				// mDanmakuView.addDanmaku(danmaku);
 
 				break;
 			}
@@ -600,21 +537,6 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			}
 
 			break;
-		// case R.id.right_img:
-		// // setRequestedOrientation(getRequestedOrientation() ==
-		// // ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ?
-		// // ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-		// // : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-		// if (isDanMu == true) {
-		// listView.setVisibility(View.VISIBLE);
-		// mDanmakuView.setVisibility(View.GONE);
-		//
-		// } else {
-		// listView.setVisibility(View.GONE);
-		// mDanmakuView.setVisibility(View.VISIBLE);
-		// }
-		// isDanMu = !isDanMu;
-		// break;
 
 		default:
 			break;
