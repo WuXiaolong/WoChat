@@ -29,7 +29,7 @@ public class MessageManager {
 	private static DBManager manager = null;
 
 	private MessageManager(Context context) {
-		manager = DBManager.getInstance(context, "databaseName");
+		manager = DBManager.getInstance(context, "wochat");
 	}
 
 	public static MessageManager getInstance(Context context) {
@@ -53,9 +53,9 @@ public class MessageManager {
 		SQLiteTemplate sqLiteTemplate = SQLiteTemplate.getInstance(manager,
 				false);
 		ContentValues contentValues = new ContentValues();
-		contentValues.put(IMMessage.CHAT_CONTENT, iMMessage.getChat_content());
-		contentValues.put(IMMessage.MSG_FROM, iMMessage.getMsg_from());
-		contentValues.put(IMMessage.MSG_TIME, iMMessage.getMsg_time());
+		contentValues.put(IMMessage.CHAT_CONTENT, iMMessage.getChatContent());
+		contentValues.put(IMMessage.MSG_FROM, iMMessage.getMsgFrom());
+		contentValues.put(IMMessage.MSG_TIME, iMMessage.getMsgTime());
 		contentValues.put(IMMessage.AVATAR, iMMessage.getAvatar());
 		contentValues.put(IMMessage.ROOMID, iMMessage.getRoomId());
 		return sqLiteTemplate.insert("im_msg_his", contentValues);
@@ -99,13 +99,13 @@ public class MessageManager {
 							@Override
 							public IMMessage mapRow(Cursor cursor, int index) {
 								IMMessage msg = new IMMessage();
-								msg.setChat_content(cursor.getString(cursor
+								msg.setChatContent(cursor.getString(cursor
 										.getColumnIndex(IMMessage.CHAT_CONTENT)));
-								msg.setMsg_from(cursor.getString(cursor
+								msg.setMsgFrom(cursor.getString(cursor
 										.getColumnIndex(IMMessage.MSG_FROM)));
 								msg.setRoomId(cursor.getString(cursor
 										.getColumnIndex(IMMessage.ROOMID)));
-								msg.setMsg_time(cursor.getString(cursor
+								msg.setMsgTime(cursor.getString(cursor
 										.getColumnIndex(IMMessage.MSG_TIME)));
 								// 第一步，从数据库中读取出相应数据，并保存在字节数组中
 								byte[] avatar = cursor.getBlob(cursor
@@ -135,13 +135,13 @@ public class MessageManager {
 							@Override
 							public IMMessage mapRow(Cursor cursor, int index) {
 								IMMessage msg = new IMMessage();
-								msg.setChat_content(cursor.getString(cursor
+								msg.setChatContent(cursor.getString(cursor
 										.getColumnIndex(IMMessage.CHAT_CONTENT)));
-								msg.setMsg_from(cursor.getString(cursor
+								msg.setMsgFrom(cursor.getString(cursor
 										.getColumnIndex(IMMessage.MSG_FROM)));
 								msg.setRoomId(cursor.getString(cursor
 										.getColumnIndex(IMMessage.ROOMID)));
-								msg.setMsg_time(cursor.getString(cursor
+								msg.setMsgTime(cursor.getString(cursor
 										.getColumnIndex(IMMessage.MSG_TIME)));
 								// 第一步，从数据库中读取出相应数据，并保存在字节数组中
 								byte[] avatar = cursor.getBlob(cursor

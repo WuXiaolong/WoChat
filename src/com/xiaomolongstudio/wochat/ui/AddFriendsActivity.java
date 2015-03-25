@@ -1,5 +1,15 @@
 package com.xiaomolongstudio.wochat.ui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jivesoftware.smack.Roster;
+import org.jivesoftware.smack.RosterEntry;
+import org.jivesoftware.smack.packet.RosterPacket.ItemType;
+
 import android.content.ComponentName;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -8,9 +18,11 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.xiaomolongstudio.wochat.R;
+import com.xiaomolongstudio.wochat.adapter.AddFriendsAdapter;
 import com.xiaomolongstudio.wochat.service.XMPPService;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
 import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
@@ -18,18 +30,44 @@ import com.xiaomolongstudio.wochat.utils.PreferenceUtils;
 import com.xiaomolongstudio.wochat.xmpp.IConnectionStatusCallback;
 
 public class AddFriendsActivity extends BaseActionActivity {
+	private ListView mListView;
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		super.bindXMPPService(AppConfig.CHATROOM_ACTION, mServiceConnection);
 		setContentView(R.layout.add_friends);
-		findViewById(R.id.button1).setOnClickListener(new OnClickListener() {
+		mListView = (ListView) findViewById(R.id.mListView);
+	}
 
-			@Override
-			public void onClick(View v) {
-				agree();
+	private List<Map<String, Object>> friendsList;
+
+	public void initAddFriends() {
+		if (mXMPPService != null) {
+			friendsList = new ArrayList<Map<String, Object>>();
+			Roster roster = mXMPPService.roster();
+
+			Collection<RosterEntry> it = roster.getEntries();
+			Map<String, Object> map;
+			for (RosterEntry rosterEnter : it) {
+				if (rosterEnter.getType() == ItemType.from) {
+					map = new HashMap<String, Object>();
+					map.put("useID", rosterEnter.getUser().split("@")[0]);
+					map.put("fromJid", rosterEnter.getUser());
+					if (rosterEnter.getName() == null) {
+						map.put("nickName", rosterEnter.getUser().split("@")[0]);
+					} else {
+						map.put("nickName", rosterEnter.getName());
+					}
+					friendsList.add(map);
+				}
 
 			}
-		});
+			if (friendsList.size() > 0) {
+				AddFriendsAdapter addFriendsAdapter = new AddFriendsAdapter(
+						AddFriendsActivity.this, friendsList, mXMPPService);
+				mListView.setAdapter(addFriendsAdapter);
+			}
+		}
 	}
 
 	private void agree() {
@@ -42,7 +80,7 @@ public class AddFriendsActivity extends BaseActionActivity {
 		Log.i("wxl", "fromNickName=" + fromNickName);
 		String groupName = "Friends";
 		mXMPPService.createEntry(fromJid, fromNickName);
-		// mXMPPService.agree(fromJid);
+		mXMPPService.agree(fromJid);
 	}
 
 	private XMPPService mXMPPService;
@@ -89,6 +127,7 @@ public class AddFriendsActivity extends BaseActionActivity {
 					mXMPPService.login(userName, userPassword);
 			}
 			Log.i("wxl", "isAuthenticated=" + mXMPPService.isAuthenticated());
+			initAddFriends();
 		}
 
 		@Override

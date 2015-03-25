@@ -9,7 +9,6 @@ import android.net.ConnectivityManager;
 import android.text.TextUtils;
 
 import com.xiaomolongstudio.wochat.service.XMPPService;
-import com.xiaomolongstudio.wochat.utils.L;
 
 public class XMPPBroadcastReceiver extends BroadcastReceiver {
 	public static final String BOOT_COMPLETED_ACTION = "com.way.action.BOOT_COMPLETED";
@@ -18,7 +17,6 @@ public class XMPPBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		String action = intent.getAction();
-		L.i("action = " + action);
 		/**
 		 * 网络变化监听
 		 */
@@ -32,7 +30,6 @@ public class XMPPBroadcastReceiver extends BroadcastReceiver {
 		 * 关机监听
 		 */
 		else if (intent.getAction().equals(Intent.ACTION_SHUTDOWN)) {
-			L.d("System shutdown, stopping service.");
 			Intent xmppServiceIntent = new Intent(context, XMPPService.class);
 			context.stopService(xmppServiceIntent);
 		}

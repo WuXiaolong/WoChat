@@ -6,6 +6,7 @@ public class PreferenceConstants {
 	public final static String REPORT_CRASH = "reportcrash";
 	public final static String USER_NAME = "user_name";
 	public final static String PASSWORD = "password";
+	public final static String ISLOGIN = "is_login";
 	public final static String Server = "server";
 	public final static String AUTO_START = "auto_start";
 	public final static String SHOW_MY_HEAD= "show_my_head";

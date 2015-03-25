@@ -13,11 +13,11 @@ public class IMMessage {
 	public static final String ROOMID = "roomId";
 	public static final int SUCCESS = 0;
 	public static final int ERROR = 1;
-	private String chat_content;
-	private String msg_from;
+	private String chatContent;
+	private String msgFrom;
 	private String roomId;
 	private String nickname;
-	private String msg_time;
+	private String msgTime;
 	private byte[] avatar;
 	private Drawable drawableAvatar;
 
@@ -49,21 +49,6 @@ public class IMMessage {
 		this.avatar = avatar;
 	}
 
-	public String getChat_content() {
-		return chat_content;
-	}
-
-	public void setChat_content(String chat_content) {
-		this.chat_content = chat_content;
-	}
-
-	public String getMsg_from() {
-		return msg_from;
-	}
-
-	public void setMsg_from(String msg_from) {
-		this.msg_from = msg_from;
-	}
 
 	public String getNickname() {
 		return nickname;
@@ -73,13 +58,30 @@ public class IMMessage {
 		this.nickname = nickname;
 	}
 
-	public String getMsg_time() {
-		return msg_time;
+	public String getChatContent() {
+		return chatContent;
 	}
 
-	public void setMsg_time(String msg_time) {
-		this.msg_time = msg_time;
+	public void setChatContent(String chatContent) {
+		this.chatContent = chatContent;
 	}
+
+	public String getMsgFrom() {
+		return msgFrom;
+	}
+
+	public void setMsgFrom(String msgFrom) {
+		this.msgFrom = msgFrom;
+	}
+
+	public String getMsgTime() {
+		return msgTime;
+	}
+
+	public void setMsgTime(String msgTime) {
+		this.msgTime = msgTime;
+	}
+
 
 	// @Override
 	// public String toString() {

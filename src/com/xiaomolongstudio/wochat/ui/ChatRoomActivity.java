@@ -171,12 +171,12 @@ public class ChatRoomActivity extends BaseActionActivity implements
 			}
 			String userName = PreferenceUtils.getPrefString(
 					ChatRoomActivity.this, PreferenceConstants.USER_NAME, "");
-			if ((userName).equals(mChatData.get(position).getMsg_from()
+			if ((userName).equals(mChatData.get(position).getMsgFrom()
 					.toString())) {
 				viewHolder.rightLayout.setVisibility(View.VISIBLE);
 				viewHolder.leftLayout.setVisibility(View.GONE);
 				viewHolder.rightChatContent.setText(mChatData.get(position)
-						.getChat_content().toString());
+						.getChatContent().toString());
 				if (mChatData.get(position).getAvatar() == null) {
 					viewHolder.rightUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
@@ -204,7 +204,7 @@ public class ChatRoomActivity extends BaseActionActivity implements
 				viewHolder.rightLayout.setVisibility(View.GONE);
 				viewHolder.leftLayout.setVisibility(View.VISIBLE);
 				viewHolder.leftChatContent.setText(mChatData.get(position)
-						.getChat_content().toString());
+						.getChatContent().toString());
 				if (mChatData.get(position).getAvatar() == null) {
 					viewHolder.leftUserImg
 							.setBackgroundResource(R.drawable.ic_launcher);
@@ -228,7 +228,7 @@ public class ChatRoomActivity extends BaseActionActivity implements
 										"好友请求已发出", Toast.LENGTH_LONG).show();
 								mXMPPService.createEntry(
 										mXMPPService.getUserJid(mChatData
-												.get(position).getMsg_from()
+												.get(position).getMsgFrom()
 												.toString()), "nickname");
 							}
 						});
@@ -465,11 +465,11 @@ public class ChatRoomActivity extends BaseActionActivity implements
 						iMMessage.setNickname(form);
 					}
 					iMMessage.setRoomId(roomName);
-					iMMessage.setMsg_from(form);
-					iMMessage.setChat_content(message.getBody());
+					iMMessage.setMsgFrom(form);
+					iMMessage.setChatContent(message.getBody());
 					String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 							.format(new Date());
-					iMMessage.setMsg_time(time);
+					iMMessage.setMsgTime(time);
 					msg = new android.os.Message();
 					msg.what = AppConfig.CHAT_ROOM_MESSAGE;
 					msg.obj = iMMessage;
@@ -504,9 +504,9 @@ public class ChatRoomActivity extends BaseActionActivity implements
 				map = new HashMap<String, Object>();
 				IMMessage iMMessage = (IMMessage) msg.obj;
 
-				map.put("form", iMMessage.getMsg_from());
+				map.put("form", iMMessage.getMsgFrom());
 				map.put("avatar", iMMessage.getAvatar());
-				map.put("chatContent", iMMessage.getChat_content());
+				map.put("chatContent", iMMessage.getChatContent());
 				chatData.add(iMMessage);
 
 				// MessageManager.getInstance(ChatRoomActivity.this)

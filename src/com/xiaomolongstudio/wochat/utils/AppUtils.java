@@ -14,4 +14,14 @@ public class AppUtils {
 		String[] res = from.split("/");
 		return res[0].toLowerCase();
 	}
+
+	/**
+	 * 根据user拼成ujid
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public static String splitJabberID(String user) {
+		return user + "@" + AppConfig.XMPP_HOST;
+	}
 }

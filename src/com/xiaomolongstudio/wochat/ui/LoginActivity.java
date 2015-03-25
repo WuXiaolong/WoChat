@@ -6,6 +6,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -74,21 +75,27 @@ public class LoginActivity extends BaseActivity {
 						public void connectionStatusChanged(int connectedState,
 								String reason) {
 							if (connectedState == XMPPService.CONNECTED) {
-								PreferenceUtils.setPrefString(
-										LoginActivity.this,
-										PreferenceConstants.USER_NAME, userName
-												.getText().toString());
-								PreferenceUtils.setPrefString(
-										LoginActivity.this,
-										PreferenceConstants.PASSWORD,
-										userPassword.getText().toString());
-								startActivity(new Intent(LoginActivity.this,
-										MainActivity.class));
-								finish();
-							} else if (connectedState == XMPPService.DISCONNECTED)
+								Log.d("wxl", "CONNECTED");
+								if (mXxService.isAuthenticated()) {
+									PreferenceUtils.setPrefString(
+											LoginActivity.this,
+											PreferenceConstants.USER_NAME,
+											userName.getText().toString());
+									PreferenceUtils.setPrefString(
+											LoginActivity.this,
+											PreferenceConstants.PASSWORD,
+											userPassword.getText().toString());
+									startActivity(new Intent(
+											LoginActivity.this,
+											MainActivity.class));
+									finish();
+								}
+							} else if (connectedState == XMPPService.DISCONNECTED) {
+								Log.d("wxl", "DISCONNECTED");
 								T.showLong(LoginActivity.this,
 										getString(R.string.request_failed)
 												+ reason);
+							}
 
 						}
 					});

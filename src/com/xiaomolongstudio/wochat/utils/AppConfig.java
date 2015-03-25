@@ -12,7 +12,7 @@ import android.app.Activity;
  * 
  */
 public class AppConfig {
-	public static final String XMPP_HOST = "192.168.2.9";
+	public static final String XMPP_HOST = "192.168.2.6";
 	public static String XMPP_SERVICE_NAME = "gmail.com";
 	public static int XMPP_PORT = 5222;
 	public static final String IMMESSAGE_KEY = "immessage.key";
@@ -29,4 +29,8 @@ public class AppConfig {
 	public static final String CONTACTS_ACTION = "cn.cntv.tvt.action.Contacts";
 	public static final String FRIEND_MSG_ACTION = "cn.cntv.tvt.action.FRIEND_MSG";
 	public static final String MAIN_ACTION = "cn.cntv.tvt.action.MAIN";
+	/**
+	 * 精确到毫秒
+	 */
+	public static final String MS_FORMART = "yyyy-MM-dd HH:mm:ss SSS";
 }

@@ -41,6 +41,7 @@ import android.widget.TextView;
 import com.xiaomolongstudio.wochat.R;
 import com.xiaomolongstudio.wochat.model.Contact;
 import com.xiaomolongstudio.wochat.service.XMPPService;
+import com.xiaomolongstudio.wochat.ui.ChatActivity;
 import com.xiaomolongstudio.wochat.utils.AppConfig;
 import com.xiaomolongstudio.wochat.utils.PingYinUtil;
 import com.xiaomolongstudio.wochat.utils.PreferenceConstants;
@@ -138,13 +139,11 @@ public class ContactsFragment extends Fragment {
 
 				@Override
 				public void onClick(View v) {
-					// Intent intent = new Intent(MyFriendsActivity.this,
-					// FriendMsgActivity.class);
-					// intent.putExtra("form",
-					// friendsList.get(position).getJid()
-					// .split("@")[0]);
-					// intent.putExtra("isFriend", true);
-					// startActivity(intent);
+					Intent intent = new Intent(getActivity(),
+							ChatActivity.class);
+					intent.putExtra("to", friendsList.get(position).getJid()
+							.split("@")[0]);
+					startActivity(intent);
 				}
 			});
 			return convertView;
