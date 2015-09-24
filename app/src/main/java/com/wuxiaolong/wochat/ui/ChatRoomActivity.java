@@ -35,10 +35,10 @@ public class ChatRoomActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
-        int createRoom = XMPPService.createRoom("15261589767", "123456", "roomId", "roomDesc");
+        int createRoom = XMPPService.getInstance().createRoom("15261589767", "123456", "roomId", "roomDesc");
         Log.d("wxl", "createRoom=" + createRoom);
         if (createRoom == 0 || createRoom == 1) {
-            mMultiUserChat = XMPPService.joinRoom("15261589767", "123456", "roomId");
+            mMultiUserChat = XMPPService.getInstance().joinRoom("15261589767", "123456", "roomId");
         }
         initView();
     }

@@ -3,6 +3,7 @@ package com.wuxiaolong.wochat.xmpp;
 import android.util.Log;
 
 import com.wuxiaolong.wochat.mvp.model.LoginModel;
+import com.wuxiaolong.wochat.utils.AppConfig;
 import com.wuxiaolong.wochat.utils.Constant;
 
 import org.jivesoftware.smack.ConnectionListener;
@@ -10,6 +11,8 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by WuXiaolong on 2015/9/24.
@@ -23,6 +26,7 @@ public class XMPPLogin {
         }
         return mXMPPLogin;
     }
+
     /**
      * 登录
      */
@@ -80,7 +84,8 @@ public class XMPPLogin {
         @Override
         public void authenticated(XMPPConnection xmppConnection) {
             Log.d("wxl", "login=authenticated");
-            mOnStatusCallbackListener.authenticated();
+//            mOnStatusCallbackListener.authenticated();
+            EventBus.getDefault().post(AppConfig.MainEvent.AUTHENTICATED);
         }
 
         @Override
@@ -91,7 +96,8 @@ public class XMPPLogin {
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.d("wxl", "login=connectionClosedOnError");
-            mOnStatusCallbackListener.disconnect(e.getMessage());
+//            mOnStatusCallbackListener.disconnect(e.getMessage());
+            EventBus.getDefault().post(AppConfig.MainEvent.DISCONNECT);
         }
 
         @Override
@@ -111,11 +117,11 @@ public class XMPPLogin {
 
     }
 
-    OnStatusCallbackListener mOnStatusCallbackListener;
+//    OnStatusCallbackListener mOnStatusCallbackListener;
 
-    public void setOnStatusCallbackListener(OnStatusCallbackListener listener) {
-        mOnStatusCallbackListener = listener;
-    }
+//    public void setOnStatusCallbackListener(OnStatusCallbackListener listener) {
+//        mOnStatusCallbackListener = listener;
+//    }
 
     public interface OnStatusCallbackListener {
 

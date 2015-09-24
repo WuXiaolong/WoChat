@@ -2,22 +2,24 @@ package com.wuxiaolong.wochat.ui;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.wuxiaolong.wochat.R;
 import com.wuxiaolong.wochat.fragment.ContactsFragment;
 import com.wuxiaolong.wochat.fragment.MessageFragment;
 import com.wuxiaolong.wochat.fragment.NewsFragment;
+import com.wuxiaolong.wochat.utils.AppConfig;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Bind(R.id.mainImgContacts)
     ImageView mainImgContacts;
     @Bind(R.id.mainImgMsg)
@@ -76,6 +78,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
 
+    }
+
+    public void onEventMainThread(AppConfig.MainEvent event) {
+        switch (event) {
+            case DISCONNECT:
+                Log.d("wxl", "main disconnect");
+                Toast.makeText(this, this.getLocalClassName() + "=disconnect", Toast.LENGTH_LONG).show();
+                break;
+            case AUTHENTICATED:
+                Toast.makeText(this, this.getLocalClassName() + "=authenticated", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     @Override

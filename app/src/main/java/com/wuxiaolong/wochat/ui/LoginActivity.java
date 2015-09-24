@@ -11,8 +11,8 @@ import android.widget.Toast;
 import com.wuxiaolong.wochat.R;
 import com.wuxiaolong.wochat.mvp.presenter.LoginPresenter;
 import com.wuxiaolong.wochat.mvp.view.LoginView;
+import com.wuxiaolong.wochat.utils.AppConfig;
 import com.wuxiaolong.wochat.view.TipDialog;
-import com.wuxiaolong.wochat.xmpp.XMPPLogin;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,7 +51,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @Override
     public void loginSuccess() {
-        new XMPPLogin().setOnStatusCallbackListener(new OnStatusCallback());
+//        new XMPPLogin().setOnStatusCallbackListener(new OnStatusCallback());
         Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
@@ -74,26 +74,21 @@ public class LoginActivity extends BaseActivity implements LoginView {
     }
 
 
-    class OnStatusCallback implements XMPPLogin.OnStatusCallbackListener {
-
-        @Override
-        public void disconnect(String reason) {
-            Log.d("wxl", "disconnect");
-            Toast.makeText(LoginActivity.this, "disconnect", Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void connecting() {
-            Log.d("wxl", "connecting");
-            Toast.makeText(LoginActivity.this, "connecting", Toast.LENGTH_LONG).show();
-        }
-
-
-        @Override
-        public void authenticated() {
-            Log.d("wxl", "authenticated");
-            Toast.makeText(LoginActivity.this, "authenticated", Toast.LENGTH_LONG).show();
-        }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mLoginPresenter.detachView();
     }
 
+    public void onEventMainThread(AppConfig.MainEvent event) {
+        switch (event) {
+            case DISCONNECT:
+                Log.d("wxl", "login disconnect");
+                Toast.makeText(LoginActivity.this, LoginActivity.this.getLocalClassName() + "=disconnect", Toast.LENGTH_LONG).show();
+                break;
+            case AUTHENTICATED:
+                Toast.makeText(LoginActivity.this, LoginActivity.this.getLocalClassName() + "=authenticated", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
 }

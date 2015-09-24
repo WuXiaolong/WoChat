@@ -15,4 +15,8 @@ public class AppConfig {
     public static final String LOGIN_RECONNECTINGIN = "reconnectingIn";
     public static final String LOGIN_AUTHENTICATED = "authenticated";
     public static final String LOGIN_CONNECTED = "connected";
+    public enum MainEvent {
+        AUTHENTICATED,
+        DISCONNECT,
+    }
 }
