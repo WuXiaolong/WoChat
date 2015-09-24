@@ -1,0 +1,83 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <FrameLayout
+        android:id="@+id/mainContent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@mipmap/skin_bottom_bar_background"
+        android:baselineAligned="true">
+
+        <FrameLayout
+            android:id="@+id/mainMsg"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/mainImgMsg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/skin_tab_icon_conversation_normal" />
+
+            <TextView
+                android:id="@+id/main_txtUnreadMsgCnt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|right"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="1dp"
+                android:background="@mipmap/skin_tips_newmessage"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="99+"
+                android:textColor="#FFFFFF"
+                android:textSize="@dimen/unreadmsgcnt_textsize"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/mainContacts"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/mainImgContacts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/skin_tab_icon_contact_normal" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/mainNews"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/mainImgNews"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@mipmap/skin_tab_icon_plugin_normal" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

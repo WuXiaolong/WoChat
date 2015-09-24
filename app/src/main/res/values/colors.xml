@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="black">#000000</color>
+    <color name="main_page_font">#8c8c8c</color>
+    <color name="main_page_font_bg">#E6E6E6</color>
+    <color name="title_bar_bg">#4bc1d2</color>
+    <color name="text_blue">#26c2f0</color>
+    <color name="text_blue_press">#5026c2f0</color>
+    <color name="text_black">#646464</color>
+    <color name="text_yellow">#ff6800</color>
+    <color name="list_item_press">#EBEBEB</color>
+    <color name="item_pressed_color_transparent">#50ff0000</color>
+    <color name="half_tra">#90000000</color>
+    <color name="divide_line_color">#c8c8c8</color>
+    <color name="txt_normal">#808080</color>
+    <color name="my_actionbar_style_theme_color">#ffffff</color>
+
+</resources>
