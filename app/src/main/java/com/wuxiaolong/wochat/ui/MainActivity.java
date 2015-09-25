@@ -50,15 +50,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         switch (tab) {
             case 0:
-                fragmentTransaction.replace(R.id.mainContent, new MessageFragment());
+                fragmentTransaction.replace(R.id.mainContent, new MessageFragment()).commit();
                 mainImgMsg.setImageResource(R.mipmap.skin_tab_icon_conversation_selected);
                 break;
             case 1:
-                fragmentTransaction.replace(R.id.mainContent, new ContactsFragment());
+                fragmentTransaction.replace(R.id.mainContent, new ContactsFragment()).commit();
                 mainImgContacts.setImageResource(R.mipmap.skin_tab_icon_contact_selected);
                 break;
             case 2:
-                fragmentTransaction.replace(R.id.mainContent, new NewsFragment());
+                fragmentTransaction.replace(R.id.mainContent, new NewsFragment()).commit();
                 mainImgNews.setImageResource(R.mipmap.skin_tab_icon_plugin_selected);
                 break;
         }
