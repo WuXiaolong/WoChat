@@ -7,4 +7,5 @@
     <dimen name="cyloginingdlg">42dp</dimen>
     <dimen name="loginingdlg_lr_margin">10dp</dimen>
     <dimen name="loginingdlg_t_margin">20dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

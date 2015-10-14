@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wuxiaolong.wochat" >
+    package="com.wuxiaolong.wochat">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,7 +9,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name"
@@ -17,7 +17,7 @@
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,7 +30,7 @@
 
         <service android:name=".utils.ReconnectService" />
 
-        <receiver android:name=".utils.XMPPBroadcastReceiver" >
+        <receiver android:name=".utils.XMPPBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
@@ -40,8 +40,11 @@
 
         <activity
             android:name=".ui.BaseActivity"
-            android:label="@string/title_activity_base" >
-        </activity>
+            android:label="@string/title_activity_base"/>
+        <activity
+            android:name=".ui.WelComeActivity"
+            android:label="@string/title_activity_wel_come"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

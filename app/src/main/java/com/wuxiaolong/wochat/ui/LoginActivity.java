@@ -12,6 +12,8 @@ import com.wuxiaolong.wochat.R;
 import com.wuxiaolong.wochat.mvp.presenter.LoginPresenter;
 import com.wuxiaolong.wochat.mvp.view.LoginView;
 import com.wuxiaolong.wochat.utils.AppConfig;
+import com.wuxiaolong.wochat.utils.Constant;
+import com.wuxiaolong.wochat.utils.PreferenceUtils;
 import com.wuxiaolong.wochat.view.TipDialog;
 
 import butterknife.Bind;
@@ -43,7 +45,7 @@ public class LoginActivity extends BaseActivity implements LoginView {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mLoginPresenter.startLogin(userName.getText().toString(), userPassword.getText().toString());
+                        mLoginPresenter.startLogin(userName.getText().toString().trim(), userPassword.getText().toString().trim());
                     }
                 }
         );
@@ -51,8 +53,10 @@ public class LoginActivity extends BaseActivity implements LoginView {
 
     @Override
     public void loginSuccess() {
-//        new XMPPLogin().setOnStatusCallbackListener(new OnStatusCallback());
         Toast.makeText(LoginActivity.this, "登录成功", Toast.LENGTH_LONG).show();
+        PreferenceUtils.setPrefString(getApplicationContext(), Constant.USERNAME, userName.getText().toString().trim());
+        PreferenceUtils.setPrefString(getApplicationContext(), Constant.USERPASSWORD, userPassword.getText().toString().trim());
+        PreferenceUtils.setPrefBoolean(getApplicationContext(), Constant.ISLOGIN, true);
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
     }
 
