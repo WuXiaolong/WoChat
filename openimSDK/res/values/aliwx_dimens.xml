@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="aliwx_audio_height">30dip</dimen>
+    <dimen name="aliwx_audio_minwidth">50dip</dimen>
+    <dimen name="aliwx_smily_column_width">20dip</dimen>
+    <dimen name="aliwx_expand_button_size">28dip</dimen>
+    <dimen name="aliwx_net_alert_height">56dip</dimen>
+    <dimen name="aliwx_send_button_w">50dip</dimen>
+    <dimen name="aliwx_max_text_width">204dip</dimen>
+    <dimen name="aliwx_editview_h">28dip</dimen>
+    <dimen name="aliwx_imageview_button_height">32dip</dimen>
+    
+    
+    <!-- 新的eico特性 -->
+    <dimen name="aliwx_net_alert_icon_size">20dip</dimen>
+    <dimen name="aliwx_title_bar_height">45dip</dimen>
+    <dimen name="aliwx_large_padding">12dip</dimen>
+    <dimen name="aliwx_message_item_height">55dip</dimen>
+    <dimen name="aliwx_common_safe_margin">12dip</dimen>
+    <dimen name="aliwx_common_unit_margin">8dip</dimen>
+    <dimen name="aliwx_common_two_unit_margin">16dip</dimen>
+    <dimen name="aliwx_column_up_unit_margin">10dip</dimen>
+    <dimen name="aliwx_column_top_margin">14dip</dimen>
+    <dimen name="aliwx_base_edit_text_top_margin">30.6dip</dimen>
+    <dimen name="aliwx_title_middle_margin">60dip</dimen>
+    <dimen name="aliwx_title_shadow_height">1px</dimen>
+    <dimen name="aliwx_pull_down_toast_size">113dip</dimen>
+    <dimen name="aliwx_smily_item_size">32dip</dimen>
+    <dimen name="aliwx_gif_item_size">60dip</dimen>
+    <dimen name="aliwx_geo_width">140dip</dimen>
+    
+    <dimen name="aliwx_font_second_grade">14sp</dimen>
+    <dimen name="aliwx_font_third_grade">12sp</dimen>
+    <dimen name="aliwx_font_fourth_grade">11sp</dimen>
+    <dimen name="aliwx_font_top_grade">20sp</dimen>
+
+    <!--  14年字体大小 -->
+    <dimen name="aliwx_common_text_size">15sp</dimen>
+    <dimen name="aliwx_common_head_size">35dip</dimen>
+    <dimen name="aliwx_unread_text_size">10sp</dimen>
+    <dimen name="aliwx_message_content_margin_right">65dip</dimen>
+     <dimen name="aliwx_common_half_safe_margin">6dip</dimen>
+     
+     <dimen name="aliwx_detail_profile_padding_top">12dip</dimen>
+    <dimen name="aliwx_detail_profile_padding_bottom">14dip</dimen>
+	<dimen name="aliwx_singletp_vertical_img_padding_height">113.3dip</dimen>
+	<dimen name="aliwx_max_sharetext_width">194.6dip</dimen>
+	
+	<dimen name="aliwx_setting_margin">13dp</dimen>
+    <dimen name="aliwx_popup_height">300dip</dimen>
+
+    <dimen name="aliwx_friend_alpha_height">25dp</dimen>
+    <dimen name="aliwx_friend_item_height">50dip</dimen>
+    <dimen name="aliwx_second_text_size">12sp</dimen>
+    <dimen name="aliwx_common_checkbox_size">25dip</dimen>
+    <dimen name="aliwx_search_btn_width">48dip</dimen>
+    <dimen name="aliwx_search_text_view_height">30dip</dimen>
+    <dimen name="aliwx_friend_letter_size">11dip</dimen>
+    <dimen name="aliwx_ww_group_bg_height">44dip</dimen>
+    <dimen name="aliwx_common_small_margin">2dip</dimen>
+    <dimen name="aliwx_ww_grou_indicator_size">12dip</dimen>
+    <dimen name="aliwx_search_view_height">49.3dip</dimen>
+    <dimen name="aliwx_search_btn_height">35.3dip</dimen>
+    <dimen name="aliwx_search_text_bg_height">36dip</dimen>
+    <dimen name="aliwx_font_first_grade">16sp</dimen>
+    <dimen name="aliwx_search_icon_size">18.6dip</dimen>
+    <dimen name="aliwx_common_quart_safe_margin">3dip</dimen>
+    <dimen name="aliwx_normal_head_size">50.6dip</dimen>
+
+    <dimen name="aliwx_friend_select_btn_width">100dip</dimen>
+    <dimen name="aliwx_common_btn_height">35dip</dimen>
+</resources>
