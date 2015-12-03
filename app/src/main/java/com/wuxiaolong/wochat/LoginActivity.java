@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         loginHelper = LoginSampleHelper.getInstance();
         // Set up the login form.
         mUserId = (EditText) findViewById(R.id.userId);
-
+        mProgressView = findViewById(R.id.login_progress);
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -60,8 +60,10 @@ public class LoginActivity extends AppCompatActivity {
             if (!TextUtils.isEmpty(localPassword)) {
                 mPasswordView.setText(localPassword);
             }
+            init(mUserId.getText().toString(),loginHelper.APP_KEY);
+            attemptLogin();
         }
-        mProgressView = findViewById(R.id.login_progress);
+
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -78,7 +80,7 @@ public class LoginActivity extends AppCompatActivity {
         LoginSampleHelper.getInstance().initIMKit(userId, appKey);
         //自定义头像和昵称回调初始化(如果不需要自定义头像和昵称，则可以省去)
         //TODO 暂时删除
-//        UserProfileSampleHelper.initProfileCallback();
+        UserProfileSampleHelper.initProfileCallback();
         //通知栏相关的初始化
         //TODO 暂时删除
 //        NotificationInitSampleHelper.init();
@@ -109,12 +111,13 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        mPasswordView.setVisibility(View.VISIBLE);
+        mProgressView.setVisibility(View.VISIBLE);
         init(userId, loginHelper.APP_KEY);
         loginHelper.login_Sample(userId, password, loginHelper.APP_KEY, new IWxCallback() {
 
             @Override
             public void onSuccess(Object... arg0) {
+
                 saveIdPasswordToLocal(userId, password);
 
                 mProgressView.setVisibility(View.GONE);
@@ -143,6 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     Log.e("wxl", "登录失败，错误码：" + errorCode + "  错误信息：" + errorMessage);
                 }
+                Log.e("wxl", "登录失败，错误码：" + errorCode + "  错误信息：" + errorMessage);
             }
         });
 

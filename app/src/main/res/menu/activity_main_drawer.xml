@@ -3,21 +3,17 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_item1"
+            android:icon="@mipmap/demo_tab_icon_message_normal"
+                android:title="消息" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_item2"
+            android:icon="@mipmap/demo_tab_icon_tribe_normal"
+            android:title="群" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_item3"
+            android:icon="@mipmap/demo_tab_icon_setting_normal"
+            android:title="设置" />
     </group>
 
     <item android:title="Communicate">
