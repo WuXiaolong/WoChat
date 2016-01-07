@@ -23,6 +23,7 @@ public class LeanchatUser extends AVUser {
 
     public static final String USERNAME = "username";
     public static final String AVATAR = "avatar";
+    public static final String NICKNAME = "nickname";
     public static final String LOCATION = "location";
     public static final String INSTALLATION = "installation";
     public static final String REGISTER_COMPLETED = "registerCompleted";

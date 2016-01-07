@@ -12,8 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
+import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.LogInCallback;
+import com.avos.avoscloud.SaveCallback;
+import com.avoscloud.leanchatlib.controller.LeanchatUser;
 import com.tencent.connect.UserInfo;
-import com.tencent.connect.auth.QQToken;
+import com.tencent.connect.common.Constants;
 import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
@@ -22,8 +28,6 @@ import com.wuxiaolong.wochat.util.AppConstant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Map;
 
 /**
  * A login screen that offers login via email/password.
@@ -37,6 +41,7 @@ public class LoginActivity extends BaseActivity {
     private View mProgressView;
     Tencent mTencent;
     TencentLoginListener mTencentLoginListener;
+    String token, openid, expires_in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,8 +97,13 @@ public class LoginActivity extends BaseActivity {
         mProgressView.setVisibility(View.VISIBLE);
         if (!mTencent.isSessionValid()) {
             mTencentLoginListener = new TencentLoginListener();
+            mTencentLoginListener.setIsLogin(true);
             mTencent.login(this, "all", mTencentLoginListener);
 
+        } else {
+            UserInfo userInfo = new UserInfo(getApplicationContext(), mTencent.getQQToken());
+            mTencentLoginListener.setIsLogin(false);
+            userInfo.getUserInfo(mTencentLoginListener);
         }
 //        LeanchatUser.logInInBackground(userId, password, new LogInCallback<LeanchatUser>() {
 //            @Override
@@ -114,35 +124,41 @@ public class LoginActivity extends BaseActivity {
     }
 
     class TencentLoginListener implements IUiListener {
-        String scope;
+        boolean isLogin;
 
-        public String getScope() {
-            return scope;
+        public boolean isLogin() {
+            return isLogin;
         }
 
-        public void setScope(String scope) {
-            this.scope = scope;
+        public void setIsLogin(boolean isLogin) {
+            this.isLogin = isLogin;
         }
+
 
         @Override
-        public void onComplete(Object o) {
-            Log.e("wxl", " mTencent.login==" + o);
+        public void onComplete(Object object) {
+            Log.e("wxl", " mTencent.login==" + object);
             Log.e("wxl", " mTencent.getOpenId==" + mTencent.getOpenId());
-            if (TextUtils.isEmpty(scope)) {
-                JSONObject jsonObject = (JSONObject) o;
+            if (isLogin) {
+                JSONObject jsonObject = (JSONObject) object;
                 try {
-                    String token = jsonObject.getString("access_token");
-                    String openid = jsonObject.getString("openid");
-                    QQToken qqToken = mTencent.getQQToken();
+                    token = jsonObject.getString(Constants.PARAM_ACCESS_TOKEN);
+                    openid = jsonObject.getString(Constants.PARAM_OPEN_ID);
+                    expires_in = jsonObject.getString(Constants.PARAM_EXPIRES_IN);
+                    mTencent.setAccessToken(token, expires_in);
+                    mTencent.setOpenId(openid);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
                 UserInfo userInfo = new UserInfo(getApplicationContext(), mTencent.getQQToken());
-                mTencentLoginListener.setScope("get_user_info");
+                mTencentLoginListener.setIsLogin(false);
                 userInfo.getUserInfo(mTencentLoginListener);
+
+
             } else {
+                loginByLeancloud(object);
             }
         }
 
@@ -157,48 +173,75 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    String nickname, avatar;
+
     public void loginByLeancloud(Object object) {
-        Map<String, String> map = (Map<String, String>) object;
-        String token = map.get("access_token");
-        String expires_in = map.get("expires_in");
-        String openid = map.get("openid");
+        JSONObject jsonObject = (JSONObject) object;
+        try {
+            nickname = jsonObject.getString("nickname");
+            avatar = jsonObject.getString("figureurl_qq_2");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 //        String nickname = map.get("openid");
-        Log.e("wxl", " token==" + token + ",expires_in=" + expires_in);
-//        AVUser.AVThirdPartyUserAuth auth = new AVUser.AVThirdPartyUserAuth(token, String.valueOf(expires_in), AVUser.AVThirdPartyUserAuth.SNS_TENCENT_WEIBO, openid);
-//        AVUser.loginWithAuthData(auth, new LogInCallback<AVUser>() {
-//
-//            @Override
-//            public void done(AVUser user, AVException e) {
-//
-//                if (e == null) {
-//                    boolean registerCompleted = user.getBoolean(LeanchatUser.REGISTER_COMPLETED);
-//                    Log.i("wxl", "registerCompleted=" + registerCompleted);
-//                    //恭喜你，已经和我们的 AVUser 绑定成功
-//                    if (registerCompleted) {
-//                        showToast("第三方 loginSucceed");
-//
-//                    } else {
-//                        //保存AVFile头像
-//                        final AVFile avFile = new AVFile(nickname, avatar, null);
-//                        avFile.saveInBackground(new SaveCallback() {
-//                            @Override
-//                            public void done(AVException e) {
-//                                if (filterException(e)) {
-//                                    saveUserAvatar(avFile, nickname);
-//                                } else {
-//                                    mProgressDialog.dismiss();
-//                                    showToast("loginWithAuthData fail");
-//                                }
-//                            }
-//                        });
-//                    }
-//
-//                } else {
-//                    e.printStackTrace();
-//                    Log.e("wxl", "loginWithAuthData fail");
-//                }
-//            }
-//        });
+        AVUser.AVThirdPartyUserAuth auth = new AVUser.AVThirdPartyUserAuth(token, String.valueOf(expires_in), AVUser.AVThirdPartyUserAuth.SNS_TENCENT_WEIBO, openid);
+        AVUser.loginWithAuthData(auth, new LeancloudLogInCallback());
+    }
+
+    class LeancloudLogInCallback extends LogInCallback<AVUser> {
+
+        @Override
+        public void done(AVUser user, AVException e) {
+
+            if (e == null) {
+                boolean registerCompleted = user.getBoolean(LeanchatUser.REGISTER_COMPLETED);
+                Log.i("wxl", "registerCompleted=" + registerCompleted);
+                //恭喜你，已经和我们的 AVUser 绑定成功
+                if (registerCompleted) {
+                    showToast("第三方 loginSucceed");
+
+                } else {
+                    //保存AVFile头像
+                    final AVFile avFile = new AVFile(nickname, avatar, null);
+                    avFile.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(AVException e) {
+                            if (filterException(e)) {
+                                saveUserAvatar(avFile, nickname);
+                            } else {
+                                showToast("loginWithAuthData fail");
+                            }
+                        }
+                    });
+                }
+
+            } else {
+                e.printStackTrace();
+                Log.e("wxl", "loginWithAuthData fail");
+            }
+        }
+    }
+
+    /**
+     * 保存用户头像和昵称
+     */
+
+    private void saveUserAvatar(AVFile avFile, String nickname) {
+        final LeanchatUser leanchatUser = LeanchatUser.getCurrentUser();
+        leanchatUser.put(LeanchatUser.AVATAR, avFile);
+        leanchatUser.put(LeanchatUser.NICKNAME, nickname);
+        leanchatUser.put(LeanchatUser.REGISTER_COMPLETED, true);
+        leanchatUser.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(AVException e) {
+                if (filterException(e)) {
+                    showToast("第三方 loginSucceed");
+                } else {
+                    showToast("第三方 loginFail");
+                }
+            }
+        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
