@@ -4,7 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WoChat.iml" filepath="$PROJECT_DIR$/WoChat.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/openimSDK/openimSDK.iml" filepath="$PROJECT_DIR$/openimSDK/openimSDK.iml" />
+      <module fileurl="file://$PROJECT_DIR$/leanchatlib/leanchatlib.iml" filepath="$PROJECT_DIR$/leanchatlib/leanchatlib.iml" />
     </modules>
   </component>
 </project>

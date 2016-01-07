@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#398ec9</color>
+    <color name="colorPrimaryDark">#1874CD</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="common_blue">#2c97e8</color>
+    <color name="common_gray">#898989</color>
+    <color name="white">#ffffff</color>
+
+    <color name="activity_default_color">#00000000</color>
+    <color name="divider_line_color">#afafaf</color>
+    <color name="login_activity_bg">#efefef</color>
+
+
+    <color name="chat_common_blue">#2C97E8</color>
+    <color name="chat_transparent">#ffff</color>
+    <color name="chat_base_color_text_black">#3e3e39</color>
+    <color name="chat_msg_emote_divider">#ffa1a1a1</color>
+    <color name="chat_LeftText">#000</color>
+    <color name="chat_record_btn_red">#f00</color>
+    <color name="chat_common_white">#fff</color>
+    <color name="chat_common_guide_color">#898989</color>
+    <color name="chat_base_color_text_white">#fff</color>
+    
+    
+    <color name="contact_num_sort_bg">#66ffffff</color>
+</resources>

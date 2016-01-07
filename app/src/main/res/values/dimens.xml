@@ -6,4 +6,7 @@
     <dimen name="nav_header_vertical_spacing">16dp</dimen>
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="chat_input_bar_height">55dp</dimen>
+    <dimen name="chat_horizontal_margin">15dp</dimen>
+    <dimen name="default_button_height">50dp</dimen>
 </resources>

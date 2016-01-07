@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#398ec9</color>
+    <color name="colorPrimaryDark">#1874CD</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="color_bottom_text_normal">#9da0a4</color>
+    <color name="color_bottom_text_press">#ffffff</color>
+    <color name="color_bottom_bg_normal">#25272a</color>
+    <color name="color_bottom_bg_press">#161819</color>
+    <color name="login_register_text_normal">#cbced1</color>
+
+    <color name="setting_color_gray">#E8E8E8</color>
+
+    <!-- hot char colors -->
+
+    <color name="hot_color_black">#000000</color>
+    <color name="hot_color_bg">#efeff4</color>
+    <color name="hot_color_title_bg">#f6f6f6</color>
+    <color name="hot_color_search_bg">#dadbdf</color>
+    <color name="hot_color_search_inside_bg">#ffffff</color>
+    <color name="hot_color_search_hint_txt">#97979b</color>
+    <color name="hot_color_count">#398ec9</color>
+    <color name="hot_color_channel">#b7b7b7</color>
+    <color name="hot_color_line">#e1e1e1</color>
+
+    <!-- reset password colors -->
+    <color name="reset_color_edt_hint">#bababa</color>
+    <color name="reset_color_get_code">#398ec9</color>
+    <!-- alarm_tips_color -->
+    <color name="alarm_tips_title">#497ac2</color>
+    <color name="alarm_tips_content">#393939</color>
+    <color name="alarm_tips_station">#939393</color>
+
+
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+
+    <color name="text_black">#333333</color>
+    <color name="text_gray">#a7a7a7</color>
+    <color name="divider_line_color">#afafaf</color>
+    <color name="common_gray">#898989</color>
 </resources>

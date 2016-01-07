@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/wuxiaolong/wochat/leancloud/ChatManager.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/wuxiaolong/wochat/leancloud/ConnectionChangeEvent.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/wuxiaolong/wochat/leancloud/ConversationEventHandler.java" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/com/wuxiaolong/wochat/leancloud/LeanchatClientEventHandler.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/leanchatlib/src/main/java/com/avoscloud/leanchatlib/controller/ConversationEventHandler.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/leanchatlib/src/main/java/com/avoscloud/leanchatlib/model/Room.java" charset="GBK" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

@@ -9,28 +9,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.alibaba.mobileim.YWIMKit;
-import com.alibaba.mobileim.contact.IYWContact;
-import com.alibaba.mobileim.kit.common.IMUtility;
-import com.alibaba.mobileim.utility.IMPrefsTools;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
-    private YWIMKit mIMKit;
     TextView nickname;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mIMKit = LoginSampleHelper.getInstance().getIMKit();
-        if (mIMKit == null) {
-            return;
-        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -45,19 +36,12 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
-        nickname= (TextView) header.findViewById(R.id.nickname);
+        nickname = (TextView) header.findViewById(R.id.nickname);
         switchFragment(new ConversationFragment());
-        initHead();
+        setTitle("消息");
 
     }
 
-    void initHead() {
-        //读取登录成功后保存的用户名和密码
-        String userId = IMPrefsTools.getStringPrefs(getApplicationContext(), AppConstants.USER_ID, "");
-        IYWContact iYWContact = IMUtility.getContactProfileInfo(userId, LoginSampleHelper.getInstance().APP_KEY);
-        Log.e("wxl", "getAvatarPath==" + iYWContact.getAvatarPath());
-        nickname.setText(iYWContact.getShowName());
-    }
 
     @Override
     public void onBackPressed() {
@@ -99,9 +83,11 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_item1) {
             // Handle the camera action
-            switchFragment(new TribeFragment());
+            switchFragment(new ConversationFragment());
+            setTitle("消息");
         } else if (id == R.id.nav_item2) {
-
+            setTitle("群");
+            switchFragment(new TribeFragment());
         } else if (id == R.id.nav_item3) {
 
         } else if (id == R.id.nav_share) {

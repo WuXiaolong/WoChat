@@ -1,21 +1,24 @@
 package com.wuxiaolong.wochat;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 
-import com.alibaba.mobileim.conversation.IYWConversationListener;
-import com.alibaba.mobileim.conversation.IYWConversationService;
-import com.alibaba.mobileim.conversation.YWConversation;
-import com.alibaba.mobileim.conversation.YWConversationType;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -29,6 +32,9 @@ public class ConversationFragment extends Fragment {
         // Required empty public constructor
     }
 
+    SimpleAdapter mSimpleAdapter;
+    ListView mListView;
+
     List<Map<String, String>> mConversationList;
 
     @Override
@@ -41,32 +47,13 @@ public class ConversationFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // 获取会话管理类
-        IYWConversationService conversationService = LoginSampleHelper.getInstance().getIMKit().getConversationService();
-// 添加会话列表变更监听
-        conversationService.addConversationListener(new IYWConversationListener() {
-            @Override
-            public void onItemUpdated() {
-                // 会话列表有变更，如果ISV开发者拿list来做ui展现用，可以直接调用BaseAdapter.notifyDataSetChanged()即可。
+        mListView = (ListView) view.findViewById(R.id.listView);
 
-            }
-        });
-//获取最近会话列表
-        List<YWConversation> conversationList = ConversationSampleHelper.getAllConversations();
-
-        Map<String, String> conversationMap = new HashMap<>();
-        mConversationList = new ArrayList<>();
-        for (YWConversation conversation : conversationList) {
-            if (conversation.getConversationType() == YWConversationType.Tribe) {
-                Log.e("wxl", "getLatestContent==" + conversation.getLatestContent() +
-                        "\ngetLatestTimeInMillisecond==" + conversation.getLatestTimeInMillisecond() +
-                        "\ngetTribeId==" + ConversationSampleHelper.getTribeIdFromConversation(conversation)
-                        + "\ngetMessageSender==" + conversation.getConversationBody());
-            }
-
-//            conversationMap.put(AppConstants.CONVERSATION_ID,conversation.getConversationId());
-//            conversationMap.put(AppConstants.CONVERSATION_ID,conversation.getLatestContent());
-//            conversationMap.put(AppConstants.CONVERSATION_ID,conversation.getMessageSender());
-        }
     }
+
+    public static String millisecond2String(long millisecond) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        return simpleDateFormat.format(millisecond);
+    }
+
 }
