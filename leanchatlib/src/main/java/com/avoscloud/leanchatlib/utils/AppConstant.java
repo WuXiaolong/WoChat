@@ -43,28 +43,4 @@ public class AppConstant {
     public static final String NOTIFICATION_SINGLE_CHAT = AppConstant.getPrefixConstant("notification_single_chat");
     public static final String NOTIFICATION_GROUP_CHAT = AppConstant.getPrefixConstant("notification_group_chat");
     public static final String NOTIFICATION_SYSTEM = AppConstant.getPrefixConstant("notification_system_chat");
-    /**
-     * HotChatFragment
-     */
-    public static final String HOT_LIST = "hotProgramDomainList";
-    public static final String HOT_CHANNEL = "channel";
-    public static final String HOT_TITLE = "title";
-    public static final String HOT_COUNT = "hotspot";
-    public static final String HOT_CHANNELID = "channelID";
-    public static final String HOT_KEY_CHANNEL = "hot_channel";
-    public static final String HOT_KEY_TITLE = "hot_title";
-    public static final String HOT_KEY_COUNT = "hot_count";
-    public static final String HOT_KEY_CHANNELID = "hot_channel_id";
-    public static final String FRIEND_DATE = "date";
-    public static final String FRIEND_CHANNEL = "channel";
-    public static final String FRIEND_CHANNEL_ID = "channelId";
-    public static final String FRIEND_PROGRAM_ID = "programID";
-    public static final String FRIEND_PROGRAM_NAME = "programname";
-    public static final String FRIEND_USER_ID = "userid";
-    public static final String FRIEND_IS_TRAILER = "istrailer";
-    public static final String PHONE_NUMBER_NAME = "phoneNumberName";
-    public static final String PHONE_NUMBER = "phoneNumber";
-    public static final String PHONE_CONTACT_AVATAR = "phoneContactAvatar";
-    public static final String PHONE_USER = "phoneUser";
-    public static final String PHONE_IS_FRIEND = "isFriend";
 }

@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.util;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

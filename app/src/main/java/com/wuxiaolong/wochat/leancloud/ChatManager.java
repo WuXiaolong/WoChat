@@ -12,6 +12,7 @@ import com.avos.avoscloud.im.v2.AVIMMessageManager;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
+import com.avoscloud.leanchatlib.controller.LeanchatClientEventHandler;
 
 import java.util.ArrayList;
 import java.util.List;

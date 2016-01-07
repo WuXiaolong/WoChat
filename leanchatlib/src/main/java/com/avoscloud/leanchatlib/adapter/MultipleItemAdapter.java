@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import com.avos.avoscloud.im.v2.AVIMMessage;
 import com.avos.avoscloud.im.v2.AVIMReservedMessageType;
 import com.avos.avoscloud.im.v2.AVIMTypedMessage;
-import com.avoscloud.leanchatlib.utils.AVImClientManager;
+import com.avoscloud.leanchatlib.controller.AVImClientManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;

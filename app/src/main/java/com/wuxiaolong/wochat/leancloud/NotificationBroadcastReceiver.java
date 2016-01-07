@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.wuxiaolong.wochat.AppConstant;
-import com.wuxiaolong.wochat.ui.ChatRoomActivity;
+import com.wuxiaolong.wochat.util.AppConstant;
+import com.wuxiaolong.wochat.ui.chat.ChatRoomActivity;
 import com.wuxiaolong.wochat.ui.LoginActivity;
 
 

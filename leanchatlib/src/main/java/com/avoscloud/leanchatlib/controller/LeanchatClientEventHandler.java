@@ -1,7 +1,8 @@
-package com.wuxiaolong.wochat.leancloud;
+package com.avoscloud.leanchatlib.controller;
 
 import com.avos.avoscloud.im.v2.AVIMClient;
 import com.avos.avoscloud.im.v2.AVIMClientEventHandler;
+import com.avoscloud.leanchatlib.event.ConnectionChangeEvent;
 
 import de.greenrobot.event.EventBus;
 

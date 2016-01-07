@@ -1,9 +1,10 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.util;
 
 /**
  * Created by WuXiaolong on 2015/12/11.
  */
 public class AppConstant {
+    public static final String TENCENT_APP_ID = "1105018875";
     public static final String FRAGMENT_TAG_HOTCHAT = "HotChatFragment";
     public static final String FRAGMENT_TAG_FRIEND = "FriendFragment";
     public static final String FRAGMENT_TAG_LISTENING = "ListeningFragment";

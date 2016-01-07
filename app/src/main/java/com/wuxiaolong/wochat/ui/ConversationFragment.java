@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.ui;
 
 
 import android.content.Intent;
@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+
+import com.wuxiaolong.wochat.R;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

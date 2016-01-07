@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat.ui;
+package com.wuxiaolong.wochat.ui.chat;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -17,10 +17,11 @@ import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationQueryCallback;
 import com.avoscloud.leanchatlib.controller.LeanchatUser;
-import com.wuxiaolong.wochat.AppConstant;
-import com.wuxiaolong.wochat.AppUtil;
+import com.avoscloud.leanchatlib.controller.AVImClientManager;
+import com.wuxiaolong.wochat.util.AppConstant;
+import com.wuxiaolong.wochat.util.AppUtil;
 import com.wuxiaolong.wochat.R;
-import com.wuxiaolong.wochat.leancloud.AVImClientManager;
+import com.wuxiaolong.wochat.ui.BaseActivity;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ public class ChatRoomActivity extends BaseActivity {
         setContentView(R.layout.activity_chat_room);
         chatFragment = new ChatFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment_chat, chatFragment).commit();
-//        chatFragment = (ChatFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_chat);
         String conversationId = getIntent().getStringExtra(AppConstant.CONVERSATION_ID);
         String title = getIntent().getStringExtra(AppConstant.ACTIVITY_TITLE);
         initToolbar(title);
@@ -107,7 +107,7 @@ public class ChatRoomActivity extends BaseActivity {
     public static void openConversation(final Activity fromActivity, final String roomName) {
         mProgressDialog = AppUtil.showProgressDialog(fromActivity);
         final String userName = LeanchatUser.getCurrentUser().getUsername();
-
+        Log.e("wxl", "openConversation userName=" +userName);
         AVImClientManager.getInstance().open(userName, new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {

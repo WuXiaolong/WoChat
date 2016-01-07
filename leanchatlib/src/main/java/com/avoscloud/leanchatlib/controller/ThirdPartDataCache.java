@@ -1,4 +1,4 @@
-package com.avoscloud.leanchatlib.utils;
+package com.avoscloud.leanchatlib.controller;
 
 import android.text.TextUtils;
 

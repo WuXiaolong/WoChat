@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.ui;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,6 +13,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.wuxiaolong.wochat.R;
 
 
 public class MainActivity extends AppCompatActivity

@@ -10,7 +10,8 @@ import com.avos.avoscloud.im.v2.AVIMTypedMessage;
 import com.avos.avoscloud.im.v2.AVIMTypedMessageHandler;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
-import com.wuxiaolong.wochat.AppConstant;
+import com.avoscloud.leanchatlib.controller.AVImClientManager;
+import com.wuxiaolong.wochat.util.AppConstant;
 import com.wuxiaolong.wochat.R;
 
 import de.greenrobot.event.EventBus;

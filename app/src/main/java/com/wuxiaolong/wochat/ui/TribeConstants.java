@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.ui;
 
 /**
  * Created by mayongge on 15-10-23.

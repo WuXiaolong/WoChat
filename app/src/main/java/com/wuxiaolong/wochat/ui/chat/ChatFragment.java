@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat.ui;
+package com.wuxiaolong.wochat.ui.chat;
 
 
 import android.os.Bundle;
@@ -26,7 +26,7 @@ import com.avoscloud.leanchatlib.event.InputBottomBarTextEvent;
 import com.avoscloud.leanchatlib.ui.BaseFragment;
 import com.avoscloud.leanchatlib.view.AVInputBottomBar;
 import com.wuxiaolong.wochat.R;
-import com.wuxiaolong.wochat.WoChatApplication;
+import com.wuxiaolong.wochat.ui.WoChatApplication;
 
 import java.util.ArrayList;
 import java.util.List;

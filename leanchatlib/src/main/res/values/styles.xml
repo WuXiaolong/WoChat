@@ -11,6 +11,10 @@
         <item name="android:editTextStyle">@style/EditText</item>
     </style>
 
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 
     <!-- activity -->
     <style name="AVActivity" parent="AppTheme" />

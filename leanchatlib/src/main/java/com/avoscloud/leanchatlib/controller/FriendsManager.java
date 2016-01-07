@@ -1,9 +1,10 @@
-package com.wuxiaolong.wochat.leancloud;
+package com.avoscloud.leanchatlib.controller;
 
 import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.FindCallback;
 import com.avoscloud.leanchatlib.controller.LeanchatUser;
+import com.avoscloud.leanchatlib.controller.UserCacheUtils;
 
 import java.util.ArrayList;
 import java.util.List;

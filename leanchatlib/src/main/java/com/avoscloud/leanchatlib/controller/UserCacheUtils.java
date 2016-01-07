@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat.leancloud;
+package com.avoscloud.leanchatlib.controller;
 
 import android.text.TextUtils;
 

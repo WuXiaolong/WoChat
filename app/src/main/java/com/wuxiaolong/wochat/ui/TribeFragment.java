@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat;
+package com.wuxiaolong.wochat.ui;
 
 
 import android.os.Bundle;
@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+
+import com.wuxiaolong.wochat.R;
 
 import java.util.List;
 import java.util.Map;

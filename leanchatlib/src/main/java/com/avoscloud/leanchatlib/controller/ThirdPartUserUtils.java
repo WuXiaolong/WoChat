@@ -1,4 +1,4 @@
-package com.avoscloud.leanchatlib.utils;
+package com.avoscloud.leanchatlib.controller;
 
 import java.util.Arrays;
 import java.util.List;

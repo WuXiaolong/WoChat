@@ -1,4 +1,4 @@
-package com.wuxiaolong.wochat.leancloud;
+package com.avoscloud.leanchatlib.event;
 
 /**
  * Created by wli on 15/12/16.
