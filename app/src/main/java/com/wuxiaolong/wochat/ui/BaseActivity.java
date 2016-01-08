@@ -21,11 +21,13 @@ import de.greenrobot.event.EventBus;
 
 public class BaseActivity extends AppCompatActivity {
     static List<Activity> mActivityList = new ArrayList<>();
+    Activity mActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActivityList.add(this);
+        mActivity = this;
     }
 
     @Override

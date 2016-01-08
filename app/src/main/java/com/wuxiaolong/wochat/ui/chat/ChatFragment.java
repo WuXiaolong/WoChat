@@ -19,16 +19,13 @@ import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMMessagesQueryCallback;
 import com.avos.avoscloud.im.v2.messages.AVIMTextMessage;
 import com.avoscloud.leanchatlib.adapter.MultipleItemAdapter;
-import com.avoscloud.leanchatlib.controller.LeanchatUser;
 import com.avoscloud.leanchatlib.event.ImTypeMessageEvent;
 import com.avoscloud.leanchatlib.event.ImTypeMessageResendEvent;
 import com.avoscloud.leanchatlib.event.InputBottomBarTextEvent;
 import com.avoscloud.leanchatlib.ui.BaseFragment;
 import com.avoscloud.leanchatlib.view.AVInputBottomBar;
 import com.wuxiaolong.wochat.R;
-import com.wuxiaolong.wochat.ui.WoChatApplication;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -47,8 +44,6 @@ public class ChatFragment extends BaseFragment {
     LinearLayoutManager mLinearLayoutManager;
     MultipleItemAdapter mMultipleItemAdapter;
     protected AVIMConversation mAVIMConversation;
-    List<LeanchatUser> friendMsgList;
-    boolean isOnlyFriend;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -60,8 +55,6 @@ public class ChatFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         EventBus.getDefault().register(this);
-        friendMsgList = WoChatApplication.getFriendMsgList();
-
         mLinearLayoutManager = new LinearLayoutManager(mActivity);
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         chatRecyclerView.setLayoutManager(mLinearLayoutManager);
@@ -79,20 +72,7 @@ public class ChatFragment extends BaseFragment {
                                     swipeRefreshLayout.setRefreshing(false);
                                     if (filterException(e)) {
                                         if (null != list && list.size() > 0) {
-                                            if (isOnlyFriend) {
-                                                //只接受好友和自己消息
-                                                List<AVIMMessage> friendList = new ArrayList<>();
-                                                LeanchatUser user = LeanchatUser.getCurrentUser();
-                                                for (AVIMMessage avimMessage : list) {
-                                                    String msgFrom = avimMessage.getFrom();
-                                                    if (friendMsgList.contains(msgFrom) || user.getUsername().equals(msgFrom)) {
-                                                        friendList.add(avimMessage);
-                                                    }
-                                                }
-                                                addMessageList(friendList);
-                                            } else {
-                                                addMessageList(list);
-                                            }
+                                            addMessageList(list);
 
                                         }
                                     }
@@ -134,6 +114,7 @@ public class ChatFragment extends BaseFragment {
     public void setConversation(AVIMConversation conversation) {
         mAVIMConversation = conversation;
         swipeRefreshLayout.setEnabled(true);
+        swipeRefreshLayout.setRefreshing(true);
         chatInputbottombar.setTag(mAVIMConversation.getConversationId());
         fetchMessages();
 //        NotificationUtils.addTag(conversation.getConversationId());
@@ -147,25 +128,10 @@ public class ChatFragment extends BaseFragment {
                 new AVIMMessagesQueryCallback() {
                     @Override
                     public void done(List<AVIMMessage> list, AVIMException e) {
+                        swipeRefreshLayout.setRefreshing(false);
                         if (filterException(e)) {
                             if (null != list && list.size() > 0) {
-                                Log.e("wxl", "fetchMessages isOnlyFriend=" + isOnlyFriend);
-                                if (isOnlyFriend) {
-                                    //只接受好友和自己消息
-                                    List<AVIMMessage> friendList = new ArrayList<>();
-                                    LeanchatUser user = LeanchatUser.getCurrentUser();
-                                    for (AVIMMessage avimMessage : list) {
-                                        String msgFrom = avimMessage.getFrom();
-                                        if (friendMsgList.contains(msgFrom) || user.getUsername().equals(msgFrom)) {
-                                            friendList.add(avimMessage);
-                                        }
-                                    }
-                                    fetchMessages(friendList);
-                                } else {
-                                    fetchMessages(list);
-                                }
-
-
+                                fetchMessages(list);
                             }
                         } else {
                             Log.e("wxl", "fetchMessages AVIMException=" + e.getMessage());
@@ -207,17 +173,6 @@ public class ChatFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 加好友
-     */
-//    public void onEvent(LeftChatItemClickEvent event) {
-//        if (null != mAVIMConversation && null != event) {
-//            Log.i("wxl", "avatarUrl==" + event.avatarUrl);
-//            AddFriendDialog addFriendDialog = new AddFriendDialog(mActivity, R.style.AddFriendDialog);
-//            addFriendDialog.show();
-//            addFriendDialog.initData(event.userId);
-//        }
-//    }
     private void sendText(String content) {
         AVIMTextMessage message = new AVIMTextMessage();
         message.setText(content);
@@ -261,16 +216,7 @@ public class ChatFragment extends BaseFragment {
     public void onEvent(ImTypeMessageEvent event) {
         Log.e("wxl", "处理推送过来的消息");
         if (null != mAVIMConversation && null != event && mAVIMConversation.getConversationId().equals(event.conversation.getConversationId())) {
-
-            if (isOnlyFriend) {
-                //只接受好友消息
-                if (friendMsgList.contains(event.message.getFrom())) {
-                    handleMsg(event);
-                }
-            } else {
-                handleMsg(event);
-            }
-
+            handleMsg(event);
         }
     }
 

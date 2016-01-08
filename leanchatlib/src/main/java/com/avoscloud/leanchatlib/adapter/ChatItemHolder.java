@@ -30,7 +30,7 @@ public class ChatItemHolder extends AVCommonViewHolder {
     protected AVIMMessage message;
     protected ImageView avatarView;
     protected TextView timeView;
-    //    protected TextView nameView;
+    protected TextView nameView;
     protected LinearLayout conventLayout;
     protected FrameLayout statusLayout;
     protected ProgressBar progressBar;
@@ -49,7 +49,7 @@ public class ChatItemHolder extends AVCommonViewHolder {
         if (isLeft) {
             avatarView = (ImageView) itemView.findViewById(R.id.chat_left_iv_avatar);
             timeView = (TextView) itemView.findViewById(R.id.chat_left_tv_time);
-//            nameView = (TextView) itemView.findViewById(R.id.chat_left_tv_name);
+            nameView = (TextView) itemView.findViewById(R.id.chat_left_tv_name);
             conventLayout = (LinearLayout) itemView.findViewById(R.id.chat_left_layout_content);
             statusLayout = (FrameLayout) itemView.findViewById(R.id.chat_left_layout_status);
             statusView = (TextView) itemView.findViewById(R.id.chat_left_tv_status);
@@ -64,7 +64,7 @@ public class ChatItemHolder extends AVCommonViewHolder {
         } else {
             avatarView = (ImageView) itemView.findViewById(R.id.chat_right_iv_avatar);
             timeView = (TextView) itemView.findViewById(R.id.chat_right_tv_time);
-//            nameView = (TextView) itemView.findViewById(R.id.chat_right_tv_name);
+            nameView = (TextView) itemView.findViewById(R.id.chat_right_tv_name);
             conventLayout = (LinearLayout) itemView.findViewById(R.id.chat_right_layout_content);
             statusLayout = (FrameLayout) itemView.findViewById(R.id.chat_right_layout_status);
             progressBar = (ProgressBar) itemView.findViewById(R.id.chat_right_progressbar);
@@ -90,17 +90,19 @@ public class ChatItemHolder extends AVCommonViewHolder {
             AppUtil.queryUser(userId, new FindCallback<LeanchatUser>() {
                 @Override
                 public void done(List<LeanchatUser> list, AVException e) {
-                    avatarView.setContentDescription(list.get(0).getAvatarUrl());
-                    Picasso.with(mContext).load(list.get(0).getAvatarUrl()).placeholder(R.mipmap.chat_default_user_avatar)
-                            .error(R.mipmap.chat_default_user_avatar).into(avatarView);
-//                    nameView.setText(list.get(0).getNickname());
+                    if (e == null) {
+                        avatarView.setContentDescription(list.get(0).getAvatarUrl());
+                        Picasso.with(mContext).load(list.get(0).getAvatarUrl()).placeholder(R.mipmap.chat_default_user_avatar)
+                                .error(R.mipmap.chat_default_user_avatar).into(avatarView);
+                        nameView.setText(list.get(0).getNickname());
+                    }
                 }
             });
         } else {
             LeanchatUser currentUser = LeanchatUser.getCurrentUser();
             Picasso.with(mContext).load(currentUser.getAvatarUrl()).placeholder(R.mipmap.chat_default_user_avatar)
                     .error(R.mipmap.chat_default_user_avatar).into(avatarView);
-//            nameView.setText(currentUser.getNickname());
+            nameView.setText(currentUser.getNickname());
         }
         switch (message.getMessageStatus()) {
             case AVIMMessageStatusFailed:
@@ -150,6 +152,6 @@ public class ChatItemHolder extends AVCommonViewHolder {
     }
 
     public void showUserName(boolean isShow) {
-//        nameView.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        nameView.setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 }

@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.im.v2.AVIMClient;
@@ -16,12 +19,13 @@ import com.avos.avoscloud.im.v2.callback.AVIMClientCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationCreatedCallback;
 import com.avos.avoscloud.im.v2.callback.AVIMConversationQueryCallback;
-import com.avoscloud.leanchatlib.controller.LeanchatUser;
 import com.avoscloud.leanchatlib.controller.AVImClientManager;
-import com.wuxiaolong.wochat.util.AppConstant;
-import com.wuxiaolong.wochat.util.AppUtil;
+import com.avoscloud.leanchatlib.controller.LeanchatUser;
 import com.wuxiaolong.wochat.R;
 import com.wuxiaolong.wochat.ui.BaseActivity;
+import com.wuxiaolong.wochat.ui.SetActivity;
+import com.wuxiaolong.wochat.util.AppConstant;
+import com.wuxiaolong.wochat.util.AppUtil;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,10 +44,14 @@ public class ChatRoomActivity extends BaseActivity {
         String conversationId = getIntent().getStringExtra(AppConstant.CONVERSATION_ID);
         String title = getIntent().getStringExtra(AppConstant.ACTIVITY_TITLE);
         initToolbar(title);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
         getSquare(conversationId);
         queryInSquare(conversationId);
     }
-//
+
 
     /**
      * 根据 conversationId 查取本地缓存中的 conversation，如若没有缓存，则返回一个新建的 conversaiton
@@ -107,7 +115,7 @@ public class ChatRoomActivity extends BaseActivity {
     public static void openConversation(final Activity fromActivity, final String roomName) {
         mProgressDialog = AppUtil.showProgressDialog(fromActivity);
         final String userName = LeanchatUser.getCurrentUser().getUsername();
-        Log.e("wxl", "openConversation userName=" +userName);
+        Log.e("wxl", "openConversation userName=" + userName);
         AVImClientManager.getInstance().open(userName, new AVIMClientCallback() {
             @Override
             public void done(AVIMClient avimClient, AVIMException e) {
@@ -168,11 +176,29 @@ public class ChatRoomActivity extends BaseActivity {
     }
 
     public static void gotoChatRoomActivity(final Activity fromActivity, AVIMConversation avimConversation, final String roomName) {
-//        ChatManager.getInstance().getRoomsTable().insertRoom(avimConversation.getConversationId());
         Intent intent = new Intent(fromActivity, ChatRoomActivity.class);
         intent.putExtra(AppConstant.CONVERSATION_ID, avimConversation.getConversationId());
         intent.putExtra(AppConstant.ACTIVITY_TITLE, roomName);
         fromActivity.startActivity(intent);
+        fromActivity.finish();
         mProgressDialog.dismiss();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.chat_room, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                startActivity(new Intent(ChatRoomActivity.this, SetActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

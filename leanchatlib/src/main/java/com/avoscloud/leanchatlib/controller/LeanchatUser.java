@@ -43,6 +43,11 @@ public class LeanchatUser extends AVUser {
         }
     }
 
+    public String getNickname() {
+        String nickname = getString(NICKNAME);
+        return nickname;
+    }
+
 
     public void saveAvatar(String path, final SaveCallback saveCallback) {
         final AVFile file;

@@ -33,7 +33,10 @@
 
 
     <color name="white">#ffffff</color>
+    <color name="background">#ffffff</color>
     <color name="black">#000000</color>
+    <color name="pink">#E91E63</color>
+    <color name="pink_press">#C2185B</color>
 
     <color name="text_black">#333333</color>
     <color name="text_gray">#a7a7a7</color>
