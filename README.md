@@ -1,7 +1,7 @@
 > 此项目基于leancloud即时通讯APP，官方demo见:[https://github.com/leancloud/leanchat-android](https://github.com/leancloud/leanchat-android)
 
 # 效果预览
-![](https://github.com/WuXiaolong/WoChat/raw/master/screenshots/screenshots.jpg)
+![](https://github.com/WuXiaolong/WoChat/raw/master/screenshots/Screenshots.png)
 
 # APK演示
 `说明：`需要下载此处apk，因为app涉及QQ登录，需签名正式上线应用宝才能授权QQ登录。
