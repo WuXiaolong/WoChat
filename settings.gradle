@@ -1,1 +1,1 @@
-include ':app', ':leanchatlib'
+include ':app', ':leanchatlib', ':xmpp'
