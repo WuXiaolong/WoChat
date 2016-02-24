@@ -6,4 +6,5 @@ package com.wuxiaolong.xmpp;
  */
 public interface XMPPClickListener {
     void connect(String msg);
+    void login(String msg);
 }
