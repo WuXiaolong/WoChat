@@ -5,6 +5,5 @@ package com.wuxiaolong.xmpp;
  * Date on 2016/2/23.
  */
 public interface XMPPClickListener {
-    void connect(String msg);
-    void login(String msg);
+    void xmppCallback();
 }

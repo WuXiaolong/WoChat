@@ -10,19 +10,21 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, XMPPClickListener {
     private XMPPService mXMPPService;
-    private XMPPHandler mXMPPHandler = new XMPPHandler();
     private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mXMPPService = new XMPPService(mXMPPHandler);
-        mXMPPHandler.setXMPPClickListener(this);
+        mXMPPService = new XMPPService();
+        mXMPPService.setXMPPClickListener(this);
         mXMPPService.initXMPPTCPConnection();
         mProgressDialog = new ProgressDialog(MainActivity.this);
         mProgressDialog.setMessage("加载中");
         findViewById(R.id.connect).setOnClickListener(this);
+        findViewById(R.id.register).setOnClickListener(this);
+        findViewById(R.id.login).setOnClickListener(this);
+        findViewById(R.id.changePassword).setOnClickListener(this);
     }
 
     @Override
@@ -54,13 +56,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.connect:
                 mXMPPService.connect();
                 break;
+            case R.id.register:
+                mXMPPService.register("test001", "123456");
+                break;
+            case R.id.login:
+                mXMPPService.login("test001", "123456");
+                break;
+            case R.id.changePassword:
+                mXMPPService.changePassword("654321");
+                break;
+            default:
+
+                break;
         }
     }
 
-    @Override
-    public void connect(String msg) {
-        toastShow(msg);
-    }
+//    @Override
+//    public void connect(String msg) {
+//        toastShow(msg);
+//    }
+//
+//    @Override
+//    public void register(String msg) {
+//        Log.i("wxl", "注册=" + msg);
+//        toastShow(msg);
+//    }
+//
+//    @Override
+//    public void login(String msg) {
+//        Log.i("wxl", "登录=" + msg);
+//        toastShow(msg);
+//    }
+//
+//    @Override
+//    public void changePassword(String msg) {
+//        Log.i("wxl", "changePassword=" + msg);
+//        toastShow(msg);
+//    }
 
     private void toastShow(CharSequence text) {
         progressDialogDismiss();
@@ -78,5 +110,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void progressDialogDismiss() {
         if (mProgressDialog.isShowing()) mProgressDialog.dismiss();
 
+    }
+
+    @Override
+    public void xmppCallback() {
+        progressDialogDismiss();
     }
 }

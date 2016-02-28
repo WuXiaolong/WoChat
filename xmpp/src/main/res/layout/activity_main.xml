@@ -17,6 +17,24 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="连接服务器" />
+
+        <Button
+            android:id="@+id/register"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="注册" />
+
+        <Button
+            android:id="@+id/login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="登录" />
+        <Button
+            android:id="@+id/changePassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="修改密码" />
+
     </LinearLayout>
 
 </ScrollView>
