@@ -1,6 +1,7 @@
 package com.wuxiaolong.xmpp;
 
-import android.os.Message;
+import android.graphics.Bitmap;
+import android.util.Base64;
 import android.util.Log;
 
 import org.jivesoftware.smack.AbstractXMPPConnection;
@@ -10,7 +11,10 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
+import java.io.ByteArrayOutputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -62,28 +66,27 @@ public class XMPPService {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
+                String connectMsg;
                 try {
-                    Message message = new Message();
-                    message.what = AppConstants.CONNECT;
-                    Log.i(TAG, "connect front");
                     if (mXMPPTCPConnection.isConnected()) {
                         Log.i(TAG, "connect successfull");
-                        message.obj = "connect successfull";
+                        connectMsg = "connect successfull";
                     } else {
                         mXMPPTCPConnection.connect();
                         if (mXMPPTCPConnection.isConnected()) {
-                            message.obj = "connect successfull";
+                            connectMsg = "connect successfull";
                         } else {
-                            message.obj = "connect failed";
+                            connectMsg = "connect failed";
                         }
 
                     }
 
-                    Log.i(TAG, "connect end=" + mXMPPTCPConnection.isConnected());
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.i(TAG, "connect e=" + e.getMessage());
+                    connectMsg = "connect e=" + e.getMessage();
                 }
+                mXMPPClickListener.connect(connectMsg);
             }
         }
 
@@ -95,6 +98,7 @@ public class XMPPService {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String loginMsg;
                 try {
                     if (!mXMPPTCPConnection.isConnected())
                         mXMPPTCPConnection.connect();
@@ -102,8 +106,6 @@ public class XMPPService {
                     e.printStackTrace();
                     mXMPPTCPConnection.disconnect();
                 }
-                Message message = new Message();
-                message.what = AppConstants.LOGIN;
                 Log.i("wxl", "XMPPService login connected=" + mXMPPTCPConnection.isConnected());
                 if (mXMPPTCPConnection.isConnected()) {
                     try {
@@ -111,18 +113,23 @@ public class XMPPService {
 
                         if (mXMPPTCPConnection.isAuthenticated()) {
                             Log.i(TAG, "登录成功");
+                            loginMsg = "登录成功";
                         } else {
                             Log.i(TAG, "登录失败");
+                            loginMsg = "登录失败";
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();//
                         Log.i(TAG, "登录异常=" + e.getMessage());
+                        loginMsg = "登录异常=" + e.getMessage();
                     }
                 } else {
                     Log.i(TAG, "connect failed");
+                    loginMsg = "connect failed";
                 }
-                mXMPPClickListener.xmppCallback();
+
+                mXMPPClickListener.login(loginMsg);
             }
         }).start();
     }
@@ -132,7 +139,7 @@ public class XMPPService {
             @Override
             public void run() {
 
-
+                String registerMsg;
                 try {
                     if (!mXMPPTCPConnection.isConnected())
                         mXMPPTCPConnection.connect();
@@ -140,8 +147,6 @@ public class XMPPService {
                     e.printStackTrace();
                     mXMPPTCPConnection.disconnect();
                 }
-                Message message = new Message();
-                message.what = AppConstants.REGISTER;
                 Log.i("wxl", "XMPPService connected=" + mXMPPTCPConnection.isConnected());
                 if (mXMPPTCPConnection.isConnected()) {
                     String serviceName = mXMPPTCPConnection.getServiceName();
@@ -151,17 +156,22 @@ public class XMPPService {
                         if (accountManager.supportsAccountCreation()) {
                             accountManager.createAccount(userName + "@" + serviceName, password);
                             Log.i(TAG, "注册成功");
+                            registerMsg = "注册成功";
                         } else {
                             Log.i(TAG, "服务端不能注册");
+                            registerMsg = "服务端不能注册";
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();//
                         Log.i(TAG, "注册异常=" + e.getMessage());
+                        registerMsg = "注册异常=" + e.getMessage();
                     }
                 } else {
                     Log.i(TAG, "connect failed");
+                    registerMsg = "connect failed";
                 }
+                mXMPPClickListener.register(registerMsg);
             }
         }).start();
     }
@@ -170,7 +180,7 @@ public class XMPPService {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
+                String changePasswordMsg;
 
                 try {
                     if (!mXMPPTCPConnection.isConnected())
@@ -187,22 +197,27 @@ public class XMPPService {
                             AccountManager accountManager = AccountManager.getInstance(mXMPPTCPConnection);
                             accountManager.changePassword(newPassword);
                             Log.i(TAG, "修改密码成功");
+                            changePasswordMsg = "修改密码成功";
                         } else {
                             Log.i(TAG, "请先登录");
+                            changePasswordMsg = "请先登录";
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();//
                         Log.i(TAG, "修改密码异常=" + e.getMessage());
+                        changePasswordMsg = "修改密码异常=" + e.getMessage();
                     }
                 } else {
-                    Log.i(TAG, "connect failed");
+
+                    changePasswordMsg = "connect failed";
                 }
+                mXMPPClickListener.register(changePasswordMsg);
             }
         }).start();
     }
 
-    public void setAvatar() {
+    public void setAvatar(final Bitmap bitmap) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -219,21 +234,61 @@ public class XMPPService {
                 if (mXMPPTCPConnection.isConnected()) {
                     try {
                         if (mXMPPTCPConnection.isAuthenticated()) {
-//                            VCard vCard = VCardManager.loadVCard();
-
+                            VCardManager vCardManager = VCardManager.getInstanceFor(mXMPPTCPConnection);
+                            VCard vCard = vCardManager.loadVCard();
+                            byte[] bytes = bitmapToByte(bitmap);
+                            String encodedImage = Base64.encodeToString(bytes, Base64.DEFAULT);
+                            vCard.setAvatar(bytes);
+                            vCardManager.saveVCard(vCard);
+                            mXMPPClickListener.setAvatar("修改头像成功");
                         } else {
-                            Log.i(TAG, "请先登录");
+                            mXMPPClickListener.setAvatar("请先登录");
                         }
 
                     } catch (Exception e) {
                         e.printStackTrace();//
-                        Log.i(TAG, "修改密码异常=" + e.getMessage());
+                        mXMPPClickListener.setAvatar("修改头像异常=" + e.getMessage());
                     }
                 } else {
-                    Log.i(TAG, "connect failed");
+                    mXMPPClickListener.setAvatar("connect failed");
                 }
             }
         }).start();
+    }
+
+
+    private byte[] bitmapToByte(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
+//        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/DCIM/Camera/IMG_20160228_070125.jpg";
+//        File file = new File(path);
+//        Log.i(TAG, "file.exists()=" + file.exists() + ",path=" + path);
+//        if (file.exists()) {
+////
+//            BufferedInputStream bis = null;
+//            try {
+//                bis = new BufferedInputStream(new FileInputStream(file));
+//                int bytes = (int) file.length();
+//                byte[] buffer = new byte[bytes];
+//                int readBytes = bis.read(buffer);
+//                if (readBytes != buffer.length) {
+//                    throw new IOException("Entire file not read");
+//                }
+//                return buffer;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                if (bis != null) {
+//                    try {
+//                        bis.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//        return null;
     }
 
     private class MyTrustManager implements X509TrustManager {

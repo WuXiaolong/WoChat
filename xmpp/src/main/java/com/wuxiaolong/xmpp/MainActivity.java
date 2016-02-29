@@ -1,8 +1,11 @@
 package com.wuxiaolong.xmpp;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,6 +14,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, XMPPClickListener {
     private XMPPService mXMPPService;
     private ProgressDialog mProgressDialog;
+    private final String TAG = "wxl";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.register).setOnClickListener(this);
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.changePassword).setOnClickListener(this);
+        findViewById(R.id.avatar).setOnClickListener(this);
     }
 
     @Override
@@ -60,10 +65,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mXMPPService.register("test001", "123456");
                 break;
             case R.id.login:
-                mXMPPService.login("test001", "123456");
+                mXMPPService.login("test001", "654321");
                 break;
             case R.id.changePassword:
-                mXMPPService.changePassword("654321");
+                mXMPPService.changePassword("123456");
+                break;
+            case R.id.avatar:
+
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+                mXMPPService.setAvatar(bitmap);
                 break;
             default:
 
@@ -71,32 +81,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    @Override
-//    public void connect(String msg) {
-//        toastShow(msg);
-//    }
-//
-//    @Override
-//    public void register(String msg) {
-//        Log.i("wxl", "注册=" + msg);
-//        toastShow(msg);
-//    }
-//
-//    @Override
-//    public void login(String msg) {
-//        Log.i("wxl", "登录=" + msg);
-//        toastShow(msg);
-//    }
-//
-//    @Override
-//    public void changePassword(String msg) {
-//        Log.i("wxl", "changePassword=" + msg);
-//        toastShow(msg);
-//    }
 
-    private void toastShow(CharSequence text) {
-        progressDialogDismiss();
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+    private void toastShow(final CharSequence text) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG, text + "");
+                progressDialogDismiss();
+                Toast.makeText(MainActivity.this, text, Toast.LENGTH_LONG).show();
+            }
+        });
+
 
     }
 
@@ -112,8 +107,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
     @Override
-    public void xmppCallback() {
-        progressDialogDismiss();
+    public void connect(String msg) {
+        toastShow(msg);
+    }
+
+    @Override
+    public void login(String msg) {
+        toastShow(msg);
+    }
+
+    @Override
+    public void register(String msg) {
+        toastShow(msg);
+    }
+
+    @Override
+    public void changePassword(String msg) {
+        toastShow(msg);
+    }
+
+    @Override
+    public void setAvatar(String msg) {
+        toastShow(msg);
+
     }
 }
