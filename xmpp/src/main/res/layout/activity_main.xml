@@ -39,6 +39,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="修改头像" />
+        <Button
+            android:id="@+id/sendMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="发消息" />
 
     </LinearLayout>
 

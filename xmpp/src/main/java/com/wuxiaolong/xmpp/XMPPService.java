@@ -8,6 +8,10 @@ import org.jivesoftware.smack.AbstractXMPPConnection;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.SASLAuthentication;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -56,6 +60,7 @@ public class XMPPService {
 //        builder.setSendPresence(true);//上线通知系统
         builder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);//安全模式
         builder.setCustomSSLContext(mSSLContext);////https不验证证书方式（信任所有证书）
+//        SASLAuthentication.blacklistSASLMechanism("SCRAM-SHA-1");
         SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
         mXMPPTCPConnection = new XMPPTCPConnection(builder.build());
@@ -289,6 +294,28 @@ public class XMPPService {
 //            }
 //        }
 //        return null;
+    }
+
+    Chat mChat;
+
+    public void sendMessage(String body) {
+        if (mChat == null) {
+            ChatManager chatManager = ChatManager.getInstanceFor(mXMPPTCPConnection);
+            String servicename = mXMPPTCPConnection.getServiceName();
+            mChat = chatManager.createChat("test007@" + servicename);
+
+            mChat.addMessageListener(new ChatMessageListener() {
+                @Override
+                public void processMessage(Chat chat, org.jivesoftware.smack.packet.Message message) {
+                    Log.d(TAG, "message result=" + message.getBody());
+                }
+            });
+        }
+        try {
+            mChat.sendMessage(body);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
     }
 
     private class MyTrustManager implements X509TrustManager {

@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.changePassword).setOnClickListener(this);
         findViewById(R.id.avatar).setOnClickListener(this);
+        findViewById(R.id.sendMessage).setOnClickListener(this);
     }
 
     @Override
@@ -74,6 +75,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
                 mXMPPService.setAvatar(bitmap);
+                break;
+            case R.id.sendMessage:
+
+                mXMPPService.sendMessage("发送消息");
                 break;
             default:
 
