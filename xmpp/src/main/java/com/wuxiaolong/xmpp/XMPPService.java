@@ -22,7 +22,9 @@ import java.io.ByteArrayOutputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -34,7 +36,7 @@ public class XMPPService {
 
     private final String TAG = "wxl";
     public final String HOST = "yax.im";
-    private final String SERVICE_NAME = "yax.im"; //sunchunlei.local labsun.com
+    private final String SERVICE_NAME = "yax.im";
     public final int PORT = 5222;
     public AbstractXMPPConnection mXMPPTCPConnection;
     private SSLContext mSSLContext;
@@ -59,10 +61,12 @@ public class XMPPService {
 //        builder.setDebuggerEnabled(true);
 //        builder.setSendPresence(true);//上线通知系统
         builder.setSecurityMode(ConnectionConfiguration.SecurityMode.required);//安全模式
-        builder.setCustomSSLContext(mSSLContext);////https不验证证书方式（信任所有证书）
-//        SASLAuthentication.blacklistSASLMechanism("SCRAM-SHA-1");
+        builder.setCustomSSLContext(mSSLContext);//https不验证证书方式（信任所有证书）
+        builder.setHostnameVerifier(new MyHostnameVerifier());
+        SASLAuthentication.unBlacklistSASLMechanism("SCRAM-SHA-1");
         SASLAuthentication.unBlacklistSASLMechanism("PLAIN");
         SASLAuthentication.unBlacklistSASLMechanism("DIGEST-MD5");
+//        SASLAuthentication.registerSASLMechanism(new SASLPlainMechanism());
         mXMPPTCPConnection = new XMPPTCPConnection(builder.build());
         return mXMPPTCPConnection;
     }
@@ -316,6 +320,15 @@ public class XMPPService {
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
+    }
+
+    private class MyHostnameVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String hostname, SSLSession session) {
+            // TODO Auto-generated method stub
+            return true;
+        }
+
     }
 
     private class MyTrustManager implements X509TrustManager {
