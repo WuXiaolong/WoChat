@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mXMPPService = new XMPPService();
-        mXMPPService.setXMPPClickListener(this);
         mXMPPService.initXMPPTCPConnection();
+        mXMPPService.setXMPPClickListener(this);
         mProgressDialog = new ProgressDialog(MainActivity.this);
         mProgressDialog.setMessage("加载中");
         findViewById(R.id.connect).setOnClickListener(this);
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mXMPPService.register("test001", "123456");
                 break;
             case R.id.login:
-                mXMPPService.login("test001", "654321");
+                mXMPPService.login("test001", "123456");
                 break;
             case R.id.changePassword:
                 mXMPPService.changePassword("123456");

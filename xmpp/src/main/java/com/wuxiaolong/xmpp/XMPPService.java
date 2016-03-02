@@ -306,7 +306,7 @@ public class XMPPService {
         if (mChat == null) {
             ChatManager chatManager = ChatManager.getInstanceFor(mXMPPTCPConnection);
             String servicename = mXMPPTCPConnection.getServiceName();
-            mChat = chatManager.createChat("test007@" + servicename);
+            mChat = chatManager.createChat("ddctrl-2@" + servicename);
 
             mChat.addMessageListener(new ChatMessageListener() {
                 @Override
