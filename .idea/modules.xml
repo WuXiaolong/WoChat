@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/WoChat.iml" filepath="$PROJECT_DIR$/WoChat.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easemob/easemob.iml" filepath="$PROJECT_DIR$/easemob/easemob.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easeui/easeui.iml" filepath="$PROJECT_DIR$/easeui/easeui.iml" />
       <module fileurl="file://$PROJECT_DIR$/leanchatlib/leanchatlib.iml" filepath="$PROJECT_DIR$/leanchatlib/leanchatlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/xmpp/xmpp.iml" filepath="$PROJECT_DIR$/xmpp/xmpp.iml" />
     </modules>

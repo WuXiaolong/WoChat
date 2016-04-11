@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">easemob</string>
+    <string name="confirm_forward_to">确定转发到：%1$s ?</string>
+    <string name="Is_not_yet_connected_to_the_server">尚未连接至服务器</string>
+    <string name="call_version_inconsistent">通话协议版本不一致</string>
+    <string name="network_unstable">网络不稳定</string>
+    <string name="no_call_data">没有通话数据</string>
+    <string name="recording_video">录制视频</string>
+    <string name="stop_record">停止录制</string>
+    <string name="record_finish_toast">录制完毕，文件存储在%s</string>
+</resources>
