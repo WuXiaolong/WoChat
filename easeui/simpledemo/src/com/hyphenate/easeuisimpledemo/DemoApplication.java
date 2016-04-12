@@ -1,8 +1,8 @@
 package com.hyphenate.easeuisimpledemo;
 
-import com.hyphenate.easeui.controller.EaseUI;
-
 import android.app.Application;
+
+import com.hyphenate.easeui.controller.EaseUI;
 
 public class DemoApplication extends Application{
     @Override

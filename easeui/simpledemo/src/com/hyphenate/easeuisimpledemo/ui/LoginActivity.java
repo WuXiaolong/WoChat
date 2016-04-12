@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMChat;
 import com.hyphenate.chat.EMChatManager;
-import com.hyphenate.chat.EMContactManager;
 import com.hyphenate.easeui.ui.EaseBaseActivity;
 import com.hyphenate.easeuisimpledemo.R;
 

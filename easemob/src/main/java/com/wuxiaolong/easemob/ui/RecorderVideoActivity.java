@@ -47,9 +47,8 @@ import android.widget.VideoView;
 import com.hyphenate.easeui.utils.EaseCommonUtils;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.PathUtil;
-import com.wuxiaolong.easemob.BaseActivity;
 import com.wuxiaolong.easemob.R;
-import com.wuxiaolong.easemob.video.Utils;
+import com.wuxiaolong.easemob.easemob.video.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

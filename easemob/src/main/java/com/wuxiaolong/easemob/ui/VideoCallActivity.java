@@ -39,7 +39,7 @@ import com.hyphenate.chat.EMClient;
 import com.hyphenate.media.EMLocalSurfaceView;
 import com.hyphenate.media.EMOppositeSurfaceView;
 import com.hyphenate.util.PathUtil;
-import com.wuxiaolong.easemob.DemoHelper;
+import com.wuxiaolong.easemob.easemob.DemoHelper;
 import com.wuxiaolong.easemob.R;
 
 import java.util.UUID;

@@ -26,12 +26,12 @@ import com.hyphenate.easeui.widget.chatrow.EaseCustomChatRowProvider;
 import com.hyphenate.easeui.widget.emojicon.EaseEmojiconMenu;
 import com.hyphenate.util.EasyUtils;
 import com.hyphenate.util.PathUtil;
-import com.wuxiaolong.easemob.ChatRowVoiceCall;
-import com.wuxiaolong.easemob.Constant;
-import com.wuxiaolong.easemob.DemoHelper;
-import com.wuxiaolong.easemob.EmojiconExampleGroupData;
+import com.wuxiaolong.easemob.easemob.ChatRowVoiceCall;
+import com.wuxiaolong.easemob.easemob.Constant;
+import com.wuxiaolong.easemob.easemob.DemoHelper;
+import com.wuxiaolong.easemob.easemob.EmojiconExampleGroupData;
 import com.wuxiaolong.easemob.R;
-import com.wuxiaolong.easemob.RobotUser;
+import com.wuxiaolong.easemob.easemob.RobotUser;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -36,7 +36,7 @@ import android.widget.Toast;
 import com.hyphenate.chat.EMCallStateChangeListener;
 import com.hyphenate.chat.EMClient;
 import com.hyphenate.util.EMLog;
-import com.wuxiaolong.easemob.DemoHelper;
+import com.wuxiaolong.easemob.easemob.DemoHelper;
 import com.wuxiaolong.easemob.R;
 
 import java.util.UUID;

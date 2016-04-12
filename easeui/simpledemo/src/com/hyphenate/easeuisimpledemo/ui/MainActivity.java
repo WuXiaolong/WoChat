@@ -1,9 +1,5 @@
 package com.hyphenate.easeuisimpledemo.ui;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import android.R.integer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +17,9 @@ import com.hyphenate.easeui.ui.EaseContactListFragment.EaseContactListItemClickL
 import com.hyphenate.easeui.ui.EaseConversationListFragment;
 import com.hyphenate.easeui.ui.EaseConversationListFragment.EaseConversationListItemClickListener;
 import com.hyphenate.easeuisimpledemo.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends EaseBaseActivity{
     private TextView unreadLabel;

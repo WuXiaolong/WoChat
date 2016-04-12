@@ -23,9 +23,8 @@ import android.widget.ListView;
 import com.hyphenate.easeui.adapter.EaseContactAdapter;
 import com.hyphenate.easeui.domain.EaseUser;
 import com.hyphenate.easeui.widget.EaseSidebar;
-import com.wuxiaolong.easemob.BaseActivity;
-import com.wuxiaolong.easemob.Constant;
-import com.wuxiaolong.easemob.DemoHelper;
+import com.wuxiaolong.easemob.easemob.Constant;
+import com.wuxiaolong.easemob.easemob.DemoHelper;
 import com.wuxiaolong.easemob.R;
 
 import java.util.ArrayList;

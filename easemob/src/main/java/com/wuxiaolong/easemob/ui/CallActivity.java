@@ -20,8 +20,7 @@ import com.hyphenate.media.EMLocalSurfaceView;
 import com.hyphenate.media.EMOppositeSurfaceView;
 import com.hyphenate.util.EMLog;
 import com.hyphenate.util.NetUtils;
-import com.wuxiaolong.easemob.BaseActivity;
-import com.wuxiaolong.easemob.Constant;
+import com.wuxiaolong.easemob.easemob.Constant;
 import com.wuxiaolong.easemob.R;
 
 public class CallActivity extends BaseActivity {

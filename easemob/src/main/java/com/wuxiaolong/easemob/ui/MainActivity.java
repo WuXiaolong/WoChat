@@ -6,8 +6,7 @@ import android.util.Log;
 
 import com.hyphenate.EMCallBack;
 import com.hyphenate.chat.EMClient;
-import com.wuxiaolong.easemob.BaseActivity;
-import com.wuxiaolong.easemob.DemoApplication;
+import com.wuxiaolong.easemob.easemob.DemoApplication;
 import com.wuxiaolong.easemob.R;
 
 public class MainActivity extends BaseActivity {
@@ -38,6 +37,7 @@ public class MainActivity extends BaseActivity {
                 //异步获取当前用户的昵称和头像(从自己服务器获取，demo使用的一个第三方服务)
 //                DemoHelper.getInstance().getUserProfileManager().asyncGetCurrentUserInfo();
                 startActivity(new Intent(MainActivity.this, ChatActivity.class).putExtra("userId", "test001"));
+                finish();
             }
 
             @Override

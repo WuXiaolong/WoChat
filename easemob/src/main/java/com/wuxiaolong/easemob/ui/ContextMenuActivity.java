@@ -18,8 +18,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.hyphenate.chat.EMMessage;
-import com.wuxiaolong.easemob.BaseActivity;
-import com.wuxiaolong.easemob.Constant;
+import com.wuxiaolong.easemob.easemob.Constant;
 import com.wuxiaolong.easemob.R;
 
 public class ContextMenuActivity extends BaseActivity {

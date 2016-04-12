@@ -32,11 +32,11 @@ import com.hyphenate.util.EMLog;
 import com.hyphenate.util.TextFormater;
 import com.wuxiaolong.easemob.BuildConfig;
 import com.wuxiaolong.easemob.R;
-import com.wuxiaolong.easemob.RecyclingImageView;
-import com.wuxiaolong.easemob.VideoEntity;
-import com.wuxiaolong.easemob.video.ImageCache;
-import com.wuxiaolong.easemob.video.ImageResizer;
-import com.wuxiaolong.easemob.video.Utils;
+import com.wuxiaolong.easemob.easemob.RecyclingImageView;
+import com.wuxiaolong.easemob.easemob.VideoEntity;
+import com.wuxiaolong.easemob.easemob.video.ImageCache;
+import com.wuxiaolong.easemob.easemob.video.ImageResizer;
+import com.wuxiaolong.easemob.easemob.video.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
